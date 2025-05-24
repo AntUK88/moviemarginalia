@@ -31,42 +31,43 @@ permalink: /photography/
   }
 
   .carousel {
+    position: relative;
+    height: auto;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
-    position: relative;
-    height: 500px;
+    overflow: visible;
   }
 
   .carousel-item {
-    flex: 0 0 80%;
-    opacity: 0.4;
-    transform: scale(0.8);
-    transition: transform 0.5s ease, opacity 0.5s ease;
     position: absolute;
+    top: 0;
     left: 50%;
-    transform: translateX(-50%) scale(0.8);
-    transform-origin: center top;
-    z-index: 1;
+    opacity: 0;
+    transform: translateX(-50%) scale(1);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index: 0;
     pointer-events: none;
   }
 
   .carousel-item.active {
     opacity: 1;
-    transform: translateX(-50%) scale(2.7); /* 1.8 × 1.5 */
+    transform: translateX(-50%) scale(1.5); /* enlarge naturally */
     z-index: 10;
     pointer-events: auto;
+    position: relative;
   }
 
   .carousel-item img {
-    width: auto !important;
-    height: auto !important;
-    max-width: 100%;
-    max-height: none !important;
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 90vw;
+    max-height: 80vh;
+    object-fit: contain;
+    margin: 0 auto;
     border-radius: 8px;
     box-shadow: 0 0 12px rgba(0,0,0,0.25);
-    object-fit: contain;
   }
 
   .photo-caption {

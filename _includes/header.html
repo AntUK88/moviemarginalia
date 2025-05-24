@@ -2,7 +2,7 @@
   <nav class="site-nav">
     <div class="nav-left">
       <a href="/" class="logo-link">
-        <img src="{{ site.github.url }}/favicon.ico" alt="Logo" class="logo-img">
+        <img src="{{ site.github.url }}/favicon.ico" alt="Logo" class="logo-img" />
         <span class="site-title">Movie Marginalia</span>
       </a>
     </div>
@@ -16,16 +16,36 @@
     </ul>
 
     <ul class="nav-right social-icons">
-      <li><a href="https://www.instagram.com/moviemarginalia" target="_blank"><i class="fa fa-instagram"></i></a></li>
-      <li><a href="https://boxd.it/1yzWH" target="_blank"><i class="fa fa-film"></i></a></li>
-      <li><a href="https://youtube.com/@moviemarginalia" target="_blank"><i class="fa fa-youtube-play"></i></a></li>
+      <li>
+        <a href="https://www.instagram.com/moviemarginalia" target="_blank"
+          ><i class="fa fa-instagram"></i
+        ></a>
+      </li>
+      <li>
+        <a href="https://boxd.it/1yzWH" target="_blank"><i class="fa fa-film"></i></a>
+      </li>
+      <li>
+        <a href="https://youtube.com/@moviemarginalia" target="_blank"
+          ><i class="fa fa-youtube-play"></i
+        ></a>
+      </li>
       <li><a href="mailto:moviemarginalia@gmail.com"><i class="fa fa-envelope"></i></a></li>
     </ul>
   </nav>
 
   <style>
+    /* Background and font on body and html */
+    html,
+    body {
+      background-color: #fff7ed !important;
+      font-family: "Georgia", "Times New Roman", serif !important;
+      margin: 0;
+      padding: 0;
+      color: #000;
+    }
+
     .site-header {
-      background: #fff;
+      background: #fff7ed !important;
       padding: 1rem 2rem;
       border-bottom: 1px solid #eee;
       margin-bottom: 2rem;
@@ -54,8 +74,9 @@
       text-decoration: none;
       color: #000;
       font-weight: 700;
-      font-size: 1.1rem; /* reduced from 1.3rem */
+      font-size: 1.1rem;
       line-height: 1;
+      font-family: "Georgia", "Times New Roman", serif;
     }
 
     .logo-img {
@@ -92,6 +113,7 @@
       line-height: 1;
       display: flex;
       align-items: center;
+      font-family: "Georgia", "Times New Roman", serif;
     }
 
     .nav-right {
@@ -115,6 +137,7 @@
       display: flex;
       align-items: center;
       line-height: 1;
+      font-family: "Georgia", "Times New Roman", serif;
     }
 
     .nav-right i {
@@ -140,6 +163,9 @@
 
     .content-wrapper {
       padding-top: 2rem;
+      font-family: "Georgia", "Times New Roman", serif;
+      background-color: #fff7ed;
+      color: #000;
     }
 
     @media (max-width: 768px) {

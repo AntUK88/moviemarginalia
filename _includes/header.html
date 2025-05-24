@@ -1,51 +1,32 @@
 <header class="site-header">
   <nav class="site-nav">
-    <div class="nav-left">
-      <a href="/" class="logo-link">
-        <img src="{{ site.github.url }}/favicon.ico" alt="Logo" class="logo-img" />
-        <span class="site-title">Movie Marginalia</span>
-      </a>
-    </div>
-
-    <ul class="nav-center nav">
-      <li><a href="/">Home</a></li>
-      <li><a href="/writing">Writing</a></li>
-      <li><a href="/selected">Selected Pieces</a></li>
-      <li><a href="/photos">Photography</a></li>
-      <li><a href="/about">About</a></li>
+    <ul class="nav-left">
+      <li class="logo">
+        <a href="/" class="logo-link">
+          <img src="{{ site.github.url }}/assets/img/favicon.ico" alt="Logo" class="logo-img">
+          Movie Marginalia
+        </a>
+      </li>
     </ul>
+    <ul class="nav-right">
+      <!-- Main menu links -->
+      <li><a href="/" class="menu-link">Home</a></li>
+      <li><a href="/writing" class="menu-link">Writing</a></li>
+      <li><a href="/selected" class="menu-link">Selected Pieces</a></li>
+      <li><a href="/photos" class="menu-link">Photography</a></li>
+      <li><a href="/about" class="menu-link">About</a></li>
 
-    <ul class="nav-right social-icons">
-      <li>
-        <a href="https://www.instagram.com/moviemarginalia" target="_blank"
-          ><i class="fa fa-instagram"></i
-        ></a>
-      </li>
-      <li>
-        <a href="https://boxd.it/1yzWH" target="_blank"><i class="fa fa-film"></i></a>
-      </li>
-      <li>
-        <a href="https://youtube.com/@moviemarginalia" target="_blank"
-          ><i class="fa fa-youtube-play"></i
-        ></a>
-      </li>
+      <!-- Social icons -->
+      <li><a href="https://www.instagram.com/moviemarginalia" target="_blank"><i class="fa fa-instagram"></i></a></li>
+      <li><a href="https://boxd.it/1yzWH" target="_blank"><i class="fa fa-film"></i></a></li>
+      <li><a href="https://youtube.com/@moviemarginalia" target="_blank"><i class="fa fa-youtube-play"></i></a></li>
       <li><a href="mailto:moviemarginalia@gmail.com"><i class="fa fa-envelope"></i></a></li>
     </ul>
   </nav>
 
   <style>
-    /* Background and font on body and html */
-    html,
-    body {
-      background-color: #fff7ed !important;
-      font-family: "Georgia", "Times New Roman", serif !important;
-      margin: 0;
-      padding: 0;
-      color: #000;
-    }
-
     .site-header {
-      background: #fff7ed !important;
+      background: #fff;
       padding: 1rem 2rem;
       border-bottom: 1px solid #eee;
       margin-bottom: 2rem;
@@ -63,8 +44,7 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      flex: 1 1 20%;
-      min-width: 180px;
+      flex: 1 1 auto;
       white-space: nowrap;
     }
 
@@ -74,9 +54,8 @@
       text-decoration: none;
       color: #000;
       font-weight: 700;
-      font-size: 1.1rem;
+      font-size: 1.3rem;
       line-height: 1;
-      font-family: "Georgia", "Times New Roman", serif;
     }
 
     .logo-img {
@@ -87,104 +66,45 @@
       vertical-align: middle;
     }
 
-    .site-title {
-      display: flex;
-      align-items: center;
-      line-height: 1;
-    }
-
-    .nav-center {
-      display: flex;
-      gap: 1.5rem;
-      list-style: none;
-      margin: 0 auto;
-      padding: 0;
-      flex: 2 1 60%;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .nav-center a {
-      text-decoration: none;
-      color: #000;
-      font-weight: 600;
-      font-size: 0.95rem;
-      white-space: nowrap;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      font-family: "Georgia", "Times New Roman", serif;
-    }
-
     .nav-right {
       display: flex;
-      gap: 1.2rem;
+      gap: 2rem; /* More space between menu group and icons */
       list-style: none;
       margin: 0;
       padding: 0;
-      flex: 1 1 20%;
+      flex: 1 1 auto;
       justify-content: flex-end;
-      min-width: 140px;
+      white-space: nowrap;
       align-items: center;
     }
 
-    .nav-right a {
+    /* Group menu links before social icons */
+    .nav-right li:nth-child(-n+5) {
+      margin-right: 1.5rem; /* small gap after last menu item */
+    }
+
+    .nav-right a.menu-link {
       color: #000;
       font-weight: 600;
       font-size: 0.95rem;
       text-decoration: none;
       white-space: nowrap;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       line-height: 1;
-      font-family: "Georgia", "Times New Roman", serif;
     }
 
-    .nav-right i {
+    .nav-right a.menu-link:hover {
+      color: #444;
+    }
+
+    .nav-right a i {
       font-size: 1.2rem;
       vertical-align: middle;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       line-height: 1;
-    }
-
-    /* Remove any vertical icon nudge */
-    .nav-right i.icon-adjust {
-      position: static;
-      top: 0;
-    }
-
-    .nav-right a:hover,
-    .nav-center a:hover,
-    .logo-link:hover {
-      color: #444;
-    }
-
-    .content-wrapper {
-      padding-top: 2rem;
-      font-family: "Georgia", "Times New Roman", serif;
-      background-color: #fff7ed;
-      color: #000;
-    }
-
-    @media (max-width: 768px) {
-      .site-nav {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .nav-left,
-      .nav-center,
-      .nav-right {
-        flex: unset;
-        min-width: auto;
-        padding-top: 0.5rem;
-      }
-      .nav-center,
-      .nav-right {
-        justify-content: flex-start;
-        flex-wrap: wrap;
-      }
     }
   </style>
 </header>

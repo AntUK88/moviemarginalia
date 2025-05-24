@@ -3,6 +3,7 @@ layout: page
 title: 
 permalink: /about
 ---
+<div style="height: 4rem;"></div>
 
 What makes cinema good is also what makes a good movie: a capacity for insight. Movie Marginalia is an effort to unveil the inner workings and major insights of cinema through the lens of our experience of it.
 

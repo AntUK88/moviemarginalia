@@ -13,6 +13,11 @@ permalink: /photography/
     <div class="carousel-item"><img src="/assets/img/Edinburgh/Picture4.jpg" alt="Photo 4"></div>
     <div class="carousel-item"><img src="/assets/img/Edinburgh/Picture5.jpg" alt="Photo 5"></div>
   </div>
+
+  <p class="photo-caption">
+    Taken on Olympus OM-10 35mm. Colour film is Fujifilm Fujicolor C200; B&W is Foma Fomapan 400 ISO.
+  </p>
+
   <div class="carousel-buttons">
     <button onclick="rotateCarousel(-1)">‹</button>
     <button onclick="rotateCarousel(1)">›</button>
@@ -21,7 +26,7 @@ permalink: /photography/
 
 <style>
   .carousel-wrapper {
-    max-width: 900px;
+    max-width: 1200px;
     margin: 3rem auto;
     text-align: center;
   }
@@ -32,11 +37,11 @@ permalink: /photography/
     align-items: center;
     overflow: hidden;
     position: relative;
-    height: 400px;
+    height: 700px;
   }
 
   .carousel-item {
-    flex: 0 0 60%;
+    flex: 0 0 80%;
     opacity: 0.4;
     transform: scale(0.8);
     transition: transform 0.5s ease, opacity 0.5s ease;
@@ -49,7 +54,7 @@ permalink: /photography/
 
   .carousel-item.active {
     opacity: 1;
-    transform: translateX(-50%) scale(1);
+    transform: translateX(-50%) scale(1.8); /* DOUBLE SIZE */
     z-index: 10;
     pointer-events: auto;
   }
@@ -57,9 +62,17 @@ permalink: /photography/
   .carousel-item img {
     width: 100%;
     border-radius: 8px;
-    box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    box-shadow: 0 0 12px rgba(0,0,0,0.25);
     max-height: 100%;
     object-fit: contain;
+  }
+
+  .photo-caption {
+    margin: 1.5rem auto;
+    font-style: italic;
+    max-width: 700px;
+    line-height: 1.5;
+    color: #444;
   }
 
   .carousel-buttons {
@@ -68,7 +81,7 @@ permalink: /photography/
 
   .carousel-buttons button {
     font-size: 2rem;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 1.2rem;
     margin: 0 1rem;
     background-color: #eee;
     border: none;

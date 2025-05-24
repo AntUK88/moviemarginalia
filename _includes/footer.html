@@ -1,14 +1,19 @@
-<footer class="footer">
-  {% for item in site.data.settings.social %}
-    <a href="{{ item.link }}" class="menu-link" target="_blank"><i class="fa fa-{{ item.icon }}" aria-hidden="true"></i></a>
-  {% endfor %}
-  <div class="footer-description"><a href="{{ site.github.url }}/">{{ site.title }} | {{ site.description }} by {{ site.author }}</a></div>
-  <hr>
-<h4>Elsewhere</h4>
-<ul class="social-links">
-  <li><a href="https://moviemarginalia.substack.com" target="_blank">Substack</a></li>
-  <li><a href="https://www.instagram.com/moviemarginalia" target="_blank">Instagram</a></li>
-  <li><a href="https://boxd.it/1yzWH" target="_blank">Letterboxd</a></li>
-  <li><a href="https://youtube.com/@moviemarginalia" target="_blank">YouTube</a></li>
-</ul>
-</footer>
+<style>
+  .social-links {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0;
+  }
+  .social-links li {
+    display: inline-block;
+    margin-right: 1rem;
+  }
+  .social-links a {
+    text-decoration: none;
+    color: #555;
+    font-weight: bold;
+  }
+  .social-links a:hover {
+    text-decoration: underline;
+  }
+</style>

@@ -17,8 +17,8 @@
 
     <ul class="nav-right social-icons">
       <li><a href="https://www.instagram.com/moviemarginalia" target="_blank"><i class="fa fa-instagram"></i></a></li>
-      <li><a href="https://boxd.it/1yzWH" target="_blank"><i class="fa fa-film"></i></a></li>
-      <li><a href="https://youtube.com/@moviemarginalia" target="_blank"><i class="fa fa-youtube-play"></i></a></li>
+      <li><a href="https://boxd.it/1yzWH" target="_blank"><i class="fa fa-film icon-adjust"></i></a></li>
+      <li><a href="https://youtube.com/@moviemarginalia" target="_blank"><i class="fa fa-youtube-play icon-adjust"></i></a></li>
       <li><a href="mailto:moviemarginalia@gmail.com"><i class="fa fa-envelope"></i></a></li>
     </ul>
   </nav>
@@ -95,6 +95,7 @@
       flex: 1 1 20%;
       justify-content: flex-end;
       min-width: 140px;
+      align-items: center;
     }
 
     .nav-right a {
@@ -103,13 +104,19 @@
       font-size: 0.95rem;
       text-decoration: none;
       white-space: nowrap;
+      display: flex;
+      align-items: center;
     }
 
     .nav-right i {
       font-size: 1.2rem;
-      vertical-align: baseline;
+      vertical-align: middle;
+    }
+
+    /* Adjust Letterboxd and YouTube icons downward */
+    .nav-right i.icon-adjust {
       position: relative;
-      top: 2px;
+      top: 3px;
     }
 
     .nav-right a:hover,

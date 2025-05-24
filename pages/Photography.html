@@ -1,0 +1,33 @@
+---
+layout: page
+title: Photography
+permalink: /photography/
+---
+
+<div class="photography-gallery">
+  <h1>Photography</h1>
+
+  <p>A selection of my photos:</p>
+
+  <div class="gallery">
+    <img src="/assets/img/photo1.jpg" alt="Description of photo 1">
+    <img src="/assets/img/photo2.jpg" alt="Description of photo 2">
+    <img src="/assets/img/photo3.jpg" alt="Description of photo 3">
+  </div>
+</div>
+
+<style>
+  .gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  .gallery img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+  }
+</style>

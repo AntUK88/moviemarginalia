@@ -5,14 +5,12 @@ permalink: /photography/
 ---
 
 <div class="carousel-wrapper">
-  <div class="carousel-frame">
-    <div class="carousel" id="carousel">
-      <div class="carousel-item"><img src="/assets/img/Edinburgh/Picture1.jpg" alt="Photo 1"></div>
-      <div class="carousel-item"><img src="/assets/img/Edinburgh/Picture2.jpg" alt="Photo 2"></div>
-      <div class="carousel-item"><img src="/assets/img/Edinburgh/Picture3.jpg" alt="Photo 3"></div>
-      <div class="carousel-item"><img src="/assets/img/Edinburgh/Picture4.jpg" alt="Photo 4"></div>
-      <div class="carousel-item"><img src="/assets/img/Edinburgh/Picture5.jpg" alt="Photo 5"></div>
-    </div>
+  <div class="carousel" id="carousel">
+    <div class="carousel-item"><img src="/assets/img/Edinburgh/Picture1.jpg" alt="Photo 1"></div>
+    <div class="carousel-item"><img src="/assets/img/Edinburgh/Picture2.jpg" alt="Photo 2"></div>
+    <div class="carousel-item"><img src="/assets/img/Edinburgh/Picture3.jpg" alt="Photo 3"></div>
+    <div class="carousel-item"><img src="/assets/img/Edinburgh/Picture4.jpg" alt="Photo 4"></div>
+    <div class="carousel-item"><img src="/assets/img/Edinburgh/Picture5.jpg" alt="Photo 5"></div>
   </div>
 
   <p class="photo-caption">
@@ -28,46 +26,44 @@ permalink: /photography/
 <style>
   .carousel-wrapper {
     max-width: 1200px;
-    margin: 2rem auto;
+    margin: 2rem auto 1rem auto;
     text-align: center;
   }
 
-  .carousel-frame {
-    position: relative;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-
   .carousel {
-    position: relative;
-    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
+    position: relative;
+    height: 500px;
   }
 
   .carousel-item {
-    opacity: 0;
+    flex: 0 0 80%;
+    opacity: 0.4;
     transform: scale(0.8);
     transition: transform 0.5s ease, opacity 0.5s ease;
     position: absolute;
-    z-index: 0;
+    left: 50%;
+    transform: translateX(-50%) scale(0.8);
+    transform-origin: center top;
+    z-index: 1;
     pointer-events: none;
   }
 
   .carousel-item.active {
     opacity: 1;
-    transform: scale(2.7); /* 50% bigger than 1.8 */
-    z-index: 1;
+    transform: translateX(-50%) scale(2.7); /* 1.8 × 1.5 */
+    z-index: 10;
     pointer-events: auto;
-    position: relative;
   }
 
   .carousel-item img {
+    width: auto !important;
+    height: auto !important;
     max-width: 100%;
-    height: auto;
-    width: auto;
+    max-height: none !important;
     border-radius: 8px;
     box-shadow: 0 0 12px rgba(0,0,0,0.25);
     object-fit: contain;

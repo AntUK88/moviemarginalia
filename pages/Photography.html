@@ -11,16 +11,16 @@ permalink: /photography/
 </div>
 <div class="carousel-wrapper">
   <div class="carousel" id="carousel">
-    <div class="carousel-item"><img src="/assets/img/Edinburgh/Picture1.jpg" alt="Photo 1"></div>
-    <div class="carousel-item"><img src="/assets/img/Edinburgh/Picture2.jpg" alt="Photo 2"></div>
-    <div class="carousel-item"><img src="/assets/img/Edinburgh/Picture3.jpg" alt="Photo 3"></div>
-    <div class="carousel-item"><img src="/assets/img/Edinburgh/Picture4.jpg" alt="Photo 4"></div>
-    <div class="carousel-item"><img src="/assets/img/Edinburgh/Picture5.jpg" alt="Photo 5"></div>
+    <div class="carousel-item"><div class="image-wrapper"><img src="/assets/img/Edinburgh/Picture1.jpg" alt="Photo 1"></div></div>
+    <div class="carousel-item"><div class="image-wrapper"><img src="/assets/img/Edinburgh/Picture2.jpg" alt="Photo 2"></div></div>
+    <div class="carousel-item"><div class="image-wrapper"><img src="/assets/img/Edinburgh/Picture3.jpg" alt="Photo 3"></div></div>
+    <div class="carousel-item"><div class="image-wrapper"><img src="/assets/img/Edinburgh/Picture4.jpg" alt="Photo 4"></div></div>
+    <div class="carousel-item"><div class="image-wrapper"><img src="/assets/img/Edinburgh/Picture5.jpg" alt="Photo 5"></div></div>
   </div>
 
   <p style="margin-top: 0.05rem; margin-bottom: 1.5rem; text-align: center; font-size: 0.9rem; font-family: Georgia, serif; font-style: italic;">
-  Camera is Olympus OM‑10 35mm; stock is Fujicolor C200 and Fomapan B&W 400.
-</p>
+    Camera is Olympus OM‑10 35mm; stock is Fujicolor C200 and Fomapan B&W 400.
+  </p>
 
   <div class="carousel-buttons">
     <button onclick="rotateCarousel(-1)">‹</button>
@@ -30,10 +30,10 @@ permalink: /photography/
 
 <style>
   .carousel-wrapper {
-  max-width: 1200px;
-  margin: 2rem auto 1rem auto; /* Less top + bottom space */
-  text-align: center;
-}
+    max-width: 1200px;
+    margin: 2rem auto 1rem auto;
+    text-align: center;
+  }
 
   .carousel {
     display: flex;
@@ -43,18 +43,6 @@ permalink: /photography/
     position: relative;
     height: 500px;
   }
-
-  .carousel::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 10%; /* You can increase/decrease this */
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent);
-  pointer-events: none;
-  z-index: 20;
-}
 
   .carousel-item {
     flex: 0 0 80%;
@@ -70,30 +58,49 @@ permalink: /photography/
 
   .carousel-item.active {
     opacity: 1;
-    transform: translateX(-50%) scale(2); /* DOUBLE SIZE */
+    transform: translateX(-50%) scale(2);
     z-index: 10;
     pointer-events: auto;
   }
 
-  .carousel-item img {
+  .image-wrapper {
+    position: relative;
     width: 100%;
-    border-radius: 0;
-    box-shadow: 0 0 12px rgba(0,0,0,0.25);
+    height: 100%;
+  }
+
+  .image-wrapper img {
+    width: 100%;
     max-height: 100%;
     object-fit: contain;
+    border-radius: 0;
+    box-shadow: 0 0 12px rgba(0,0,0,0.25);
+    display: block;
+  }
+
+  .image-wrapper::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 10%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.15), transparent);
+    pointer-events: none;
+    z-index: 2;
   }
 
   .photo-caption {
-  margin: 0.1rem auto 0.05rem auto; /* Top/bottom spacing reduced */
-  font-style: italic;
-  max-width: 700px;
-  line-height: 1.4;
-  color: #444;
-}
+    margin: 0.1rem auto 0.05rem auto;
+    font-style: italic;
+    max-width: 700px;
+    line-height: 1.4;
+    color: #444;
+  }
 
   .carousel-buttons {
-  margin-top: 0.5rem; /* Previously 1rem */
-}
+    margin-top: 0.5rem;
+  }
 
   .carousel-buttons button {
     font-size: 2rem;

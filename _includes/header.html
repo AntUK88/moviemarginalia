@@ -28,15 +28,10 @@
       background: #fff;
       padding: 1rem 2rem;
       border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
     }
 
     .site-nav {
       display: flex;
-      width: 100%;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
@@ -45,6 +40,7 @@
     .nav-left {
       display: flex;
       align-items: center;
+      flex: 1;
     }
 
     .logo-link {
@@ -67,14 +63,24 @@
       font-weight: 700;
     }
 
-    .nav-center,
-    .nav-right {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    .nav-center {
       display: flex;
-      align-items: center;
       gap: 1.2rem;
+      flex: 2;
+      justify-content: center;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-right {
+      display: flex;
+      gap: 1rem;
+      flex: 1;
+      justify-content: flex-end;
+      list-style: none;
+      margin: 0;
+      padding: 0;
     }
 
     .nav-center a,

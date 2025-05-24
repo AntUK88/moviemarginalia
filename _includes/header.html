@@ -1,27 +1,26 @@
 <header class="site-header">
   <nav class="site-nav">
-    <ul class="nav-left">
-      <li class="logo">
-        <a href="/" class="logo-link">
-          <img src="{{ site.github.url }}/assets/img/favicon.ico" alt="Logo" class="logo-img">
-          Movie Marginalia
-        </a>
-      </li>
-    </ul>
-    <ul class="nav-right">
-      <!-- Main menu links -->
-      <li><a href="/" class="menu-link">Home</a></li>
-      <li><a href="/writing" class="menu-link">Writing</a></li>
-      <li><a href="/selected" class="menu-link">Selected Pieces</a></li>
-      <li><a href="/photos" class="menu-link">Photography</a></li>
-      <li><a href="/about" class="menu-link">About</a></li>
-
-      <!-- Social icons -->
-      <li><a href="https://www.instagram.com/moviemarginalia" target="_blank"><i class="fa fa-instagram"></i></a></li>
-      <li><a href="https://boxd.it/1yzWH" target="_blank"><i class="fa fa-film"></i></a></li>
-      <li><a href="https://youtube.com/@moviemarginalia" target="_blank"><i class="fa fa-youtube-play"></i></a></li>
-      <li><a href="mailto:moviemarginalia@gmail.com"><i class="fa fa-envelope"></i></a></li>
-    </ul>
+    <div class="nav-left">
+      <a href="/" class="logo-link">
+        <img src="{{ site.github.url }}/assets/img/favicon.ico" alt="Logo" class="logo-img">
+        Movie Marginalia
+      </a>
+    </div>
+    <div class="nav-right">
+      <ul class="menu-links">
+        <li><a href="/" class="menu-link">Home</a></li>
+        <li><a href="/writing" class="menu-link">Writing</a></li>
+        <li><a href="/selected" class="menu-link">Selected Pieces</a></li>
+        <li><a href="/photos" class="menu-link">Photography</a></li>
+        <li><a href="/about" class="menu-link">About</a></li>
+      </ul>
+      <ul class="social-icons">
+        <li><a href="https://www.instagram.com/moviemarginalia" target="_blank"><i class="fa fa-instagram"></i></a></li>
+        <li><a href="https://boxd.it/1yzWH" target="_blank"><i class="fa fa-film"></i></a></li>
+        <li><a href="https://youtube.com/@moviemarginalia" target="_blank"><i class="fa fa-youtube-play"></i></a></li>
+        <li><a href="mailto:moviemarginalia@gmail.com"><i class="fa fa-envelope"></i></a></li>
+      </ul>
+    </div>
   </nav>
 
   <style>
@@ -43,9 +42,8 @@
     .nav-left {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      flex: 1 1 auto;
       white-space: nowrap;
+      flex: 1 1 auto;
     }
 
     .logo-link {
@@ -68,43 +66,50 @@
 
     .nav-right {
       display: flex;
-      gap: 2rem; /* More space between menu group and icons */
-      list-style: none;
-      margin: 0;
-      padding: 0;
+      align-items: center;
+      gap: 2rem;
       flex: 1 1 auto;
       justify-content: flex-end;
       white-space: nowrap;
+    }
+
+    .menu-links,
+    .social-icons {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
       align-items: center;
+      gap: 1.5rem;
     }
 
-    /* Group menu links before social icons */
-    .nav-right li:nth-child(-n+5) {
-      margin-right: 1.5rem; /* small gap after last menu item */
-    }
-
-    .nav-right a.menu-link {
+    .menu-link {
+      text-decoration: none;
       color: #000;
       font-weight: 600;
       font-size: 0.95rem;
-      text-decoration: none;
       white-space: nowrap;
-      display: inline-flex;
-      align-items: center;
       line-height: 1;
+      display: flex;
+      align-items: center;
     }
 
-    .nav-right a.menu-link:hover {
+    .menu-link:hover {
       color: #444;
     }
 
-    .nav-right a i {
+    .social-icons a {
+      color: #000;
+      font-weight: 600;
       font-size: 1.2rem;
-      vertical-align: middle;
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
       line-height: 1;
+    }
+
+    .social-icons a:hover {
+      color: #555;
     }
   </style>
 </header>

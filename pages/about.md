@@ -8,4 +8,4 @@ What makes cinema good is also what makes a good movie: a capacity for insight. 
 
 On this website you will find access to selected pieces of writing; a bio; and direct links to our Substack, Instagram, and Youtube.
 
-- A. M. Alcazar
+A. M. Alcazar

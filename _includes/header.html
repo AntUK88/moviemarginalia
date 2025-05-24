@@ -24,97 +24,93 @@
   </nav>
 
   <style>
-  .site-header {
-    background: #fff;
-    padding: 1rem 2rem;
-    border-bottom: 1px solid #eee;
-    margin-bottom: 2rem;
-  }
+    .site-header {
+      background: #fff;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 2rem;
+    }
 
-  .site-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .nav-left {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    flex: 1;
-  }
-
-  .logo-link {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: #000;
-    font-weight: 700;
-  }
-
-  .logo-img {
-    height: 36px;
-    width: 36px;
-    object-fit: contain;
-  }
-
-  .site-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-left: 0.4rem;
-  }
-
-  .nav-center {
-    display: flex;
-    gap: 1.2rem;
-    justify-content: center;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    flex: 2;
-  }
-
-  .nav-right {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    flex: 1;
-  }
-
-  .nav-center a,
-  .nav-right a {
-    text-decoration: none;
-    color: #000;
-    font-weight: 600;
-    font-size: 0.95rem;
-  }
-
-  .nav-right i {
-    font-size: 1.2rem;
-    vertical-align: middle;
-  }
-
-  .nav-right a:hover,
-  .nav-center a:hover {
-    color: #555;
-  }
-
-  @media (max-width: 768px) {
     .site-nav {
-      flex-direction: column;
-      align-items: flex-start;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 1.5rem;
     }
-    .nav-center,
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      white-space: nowrap;
+    }
+
+    .logo-link {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: #000;
+      font-weight: 700;
+    }
+
+    .logo-img {
+      height: 36px;
+      width: 36px;
+      object-fit: contain;
+      margin-right: 0.4rem;
+    }
+
+    .site-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .nav-center {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+      margin: 0 auto;
+      padding: 0;
+    }
+
     .nav-right {
-      justify-content: flex-start;
-      padding-top: 0.5rem;
-      flex-wrap: wrap;
+      display: flex;
+      gap: 1.2rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
     }
-  }
-</style>
+
+    .nav-center a,
+    .nav-right a {
+      text-decoration: none;
+      color: #000;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .nav-right i {
+      font-size: 1.2rem;
+    }
+
+    .nav-right a:hover,
+    .nav-center a:hover,
+    .logo-link:hover {
+      color: #444;
+    }
+
+    @media (max-width: 768px) {
+      .site-nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .nav-center,
+      .nav-right {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        padding-top: 0.5rem;
+      }
+    }
+  </style>
 </header>

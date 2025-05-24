@@ -4,32 +4,83 @@ title: Photography
 permalink: /photography/
 ---
 
-<div class="photography-gallery">
+<div class="carousel-container">
   <h1>Photography</h1>
-
-  <p>A selection of my photos:</p>
-
-  <div class="gallery">
+  <div class="carousel">
     <img src="/assets/img/Edinburgh/Picture1.jpg" alt="Description of photo 1">
     <img src="/assets/img/Edinburgh/Picture2.jpg" alt="Description of photo 2">
     <img src="/assets/img/Edinburgh/Picture3.jpg" alt="Description of photo 3">
     <img src="/assets/img/Edinburgh/Picture4.jpg" alt="Description of photo 4">
     <img src="/assets/img/Edinburgh/Picture5.jpg" alt="Description of photo 5">
   </div>
+  <div class="carousel-controls">
+    <button onclick="prevSlide()">‹</button>
+    <button onclick="nextSlide()">›</button>
+  </div>
 </div>
 
 <style>
-  .gallery {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: center;
+  .carousel-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    text-align: center;
   }
 
-  .gallery img {
-    max-width: 100%;
+  .carousel {
+    position: relative;
+    overflow: hidden;
     height: auto;
+  }
+
+  .carousel-slide {
+    display: none;
+    width: 100%;
+    border-radius: 6px;
+  }
+
+  .carousel-slide.active {
+    display: block;
+  }
+
+  .carousel-controls {
+    margin-top: 1rem;
+  }
+
+  .carousel-controls button {
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    background: #eee;
+    border: none;
     border-radius: 4px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    cursor: pointer;
+  }
+
+  .carousel-controls button:hover {
+    background: #ddd;
   }
 </style>
+
+<script>
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.carousel-slide');
+
+  function showSlide(index) {
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === index);
+    });
+  }
+
+  function nextSlide() {
+    currentSlide = (currentSlide + 1) % slides.length;
+    showSlide(currentSlide);
+  }
+
+  function prevSlide() {
+    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    showSlide(currentSlide);
+  }
+
+  // Optional: auto-advance every 5 seconds
+  setInterval(nextSlide, 5000);
+</script>

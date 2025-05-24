@@ -2,8 +2,8 @@
 <html lang="en">
   <head>
     {% include head.html %}
-    <script>
-  if (window.innerWidth <= 768) {
+   <script>
+  if (window.innerWidth <= 768 && window.location.pathname !== "/mobile.html") {
     window.location.href = "/mobile.html";
   }
 </script>

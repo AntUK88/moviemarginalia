@@ -1,34 +1,48 @@
 <footer class="footer">
-  <hr>
-  <h4>Elsewhere</h4>
   <ul class="social-links">
-    <li><a href="https://moviemarginalia.substack.com" target="_blank">Substack</a></li>
-    <li><a href="https://www.instagram.com/moviemarginalia" target="_blank">Instagram</a></li>
-    <li><a href="https://boxd.it/1yzWH" target="_blank">Letterboxd</a></li>
-    <li><a href="https://youtube.com/@moviemarginalia" target="_blank">YouTube</a></li>
+    <li>
+      <a href="https://moviemarginalia.substack.com" target="_blank">
+        <i class="fa fa-envelope-open" aria-hidden="true"></i> Substack
+      </a>
+    </li>
+    <li>
+      <a href="https://www.instagram.com/moviemarginalia" target="_blank">
+        <i class="fa fa-instagram" aria-hidden="true"></i> Instagram
+      </a>
+    </li>
+    <li>
+      <a href="https://boxd.it/1yzWH" target="_blank">
+        <i class="fa fa-film" aria-hidden="true"></i> Letterboxd
+      </a>
+    </li>
+    <li>
+      <a href="https://youtube.com/@moviemarginalia" target="_blank">
+        <i class="fa fa-youtube-play" aria-hidden="true"></i> YouTube
+      </a>
+    </li>
   </ul>
-
-  <div class="footer-description">
-    <a href="{{ site.github.url }}/">{{ site.title }} | {{ site.description }} by {{ site.author }}</a>
-  </div>
 
   <style>
     .social-links {
       list-style: none;
       padding: 0;
-      margin: 0.5rem 0 1.5rem;
+      margin: 1rem 0 2rem;
+      text-align: center;
     }
     .social-links li {
       display: inline-block;
-      margin-right: 1rem;
+      margin: 0 0.75rem;
     }
     .social-links a {
       text-decoration: none;
       color: #444;
-      font-weight: bold;
+      font-weight: 600;
     }
     .social-links a:hover {
       text-decoration: underline;
+    }
+    .social-links i {
+      margin-right: 0.4em;
     }
   </style>
 </footer>

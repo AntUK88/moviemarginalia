@@ -1,19 +1,21 @@
 <header class="site-header">
   <nav class="site-nav">
-    <ul class="nav">
-      <li class="logo">
-        <a href="/">
-          <img src="{{ site.github.url }}/favicon.ico" alt="Logo" style="height: 20px; vertical-align: middle; margin-right: 8px;">
-          Movie Marginalia
-        </a>
-      </li>
+    <div class="nav-left">
+      <a href="/" class="logo-link">
+        <img src="{{ site.github.url }}/favicon.ico" alt="Logo" class="logo-img">
+        <span class="site-title">Movie Marginalia</span>
+      </a>
+    </div>
+
+    <ul class="nav-center nav">
       <li><a href="/">Home</a></li>
       <li><a href="/writing">Writing</a></li>
       <li><a href="/selected">Selected Pieces</a></li>
       <li><a href="/photos">Photography</a></li>
       <li><a href="/about">About</a></li>
     </ul>
-    <ul class="social-icons">
+
+    <ul class="nav-right social-icons">
       <li><a href="https://www.instagram.com/moviemarginalia" target="_blank"><i class="fa fa-instagram"></i></a></li>
       <li><a href="https://boxd.it/1yzWH" target="_blank"><i class="fa fa-film"></i></a></li>
       <li><a href="https://youtube.com/@moviemarginalia" target="_blank"><i class="fa fa-youtube-play"></i></a></li>
@@ -33,14 +35,40 @@
     }
 
     .site-nav {
-      width: 100%;
       display: flex;
+      width: 100%;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
     }
 
-    .nav, .social-icons {
+    .nav-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo-link {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: #000;
+      font-weight: 700;
+    }
+
+    .logo-img {
+      height: 30px;
+      width: 30px;
+      margin-right: 0.6rem;
+      vertical-align: bottom;
+    }
+
+    .site-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .nav-center,
+    .nav-right {
       list-style: none;
       padding: 0;
       margin: 0;
@@ -49,24 +77,33 @@
       gap: 1.2rem;
     }
 
-    .nav a, .social-icons a {
+    .nav-center a,
+    .nav-right a {
       text-decoration: none;
       color: #000;
       font-weight: 600;
       font-size: 0.95rem;
     }
 
-    .nav .logo a {
-      font-weight: 700;
-      font-size: 1.2rem;
-    }
-
-    .social-icons i {
+    .nav-right i {
       font-size: 1.1rem;
     }
 
-    .social-icons a:hover {
+    .nav-right a:hover,
+    .nav-center a:hover {
       color: #555;
+    }
+
+    @media (max-width: 768px) {
+      .site-nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .nav-center, .nav-right {
+        justify-content: flex-start;
+        padding-top: 0.5rem;
+        flex-wrap: wrap;
+      }
     }
   </style>
 </header>

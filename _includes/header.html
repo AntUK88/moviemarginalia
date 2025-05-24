@@ -24,7 +24,7 @@
   </nav>
 
   <style>
-    .site-header {
+.site-header {
   background: #fff;
   padding: 1rem 2rem;
   border-bottom: 1px solid #eee;
@@ -42,7 +42,7 @@
 .nav-left {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
   flex: 1 1 20%;
   min-width: 180px;
   white-space: nowrap;
@@ -54,10 +54,12 @@
   text-decoration: none;
   color: #000;
   font-weight: 700;
+  font-size: 1.3rem;
+  line-height: 1;
 }
 
 .logo-img {
-  height: 28px; /* lowered height to better align */
+  height: 28px;
   width: auto;
   object-fit: contain;
   margin-right: 0.4rem;
@@ -65,11 +67,9 @@
 }
 
 .site-title {
-  font-size: 1.3rem;
-  font-weight: 700;
-  line-height: 1; /* reduce line height */
   display: flex;
   align-items: center;
+  line-height: 1;
 }
 
 .nav-center {
@@ -89,7 +89,9 @@
   font-weight: 600;
   font-size: 0.95rem;
   white-space: nowrap;
-  line-height: 1.3;
+  line-height: 1;
+  display: flex;
+  align-items: center;
 }
 
 .nav-right {
@@ -124,7 +126,7 @@
   line-height: 1;
 }
 
-/* Remove the downward nudge to icons for natural alignment */
+/* Remove any vertical icon nudge */
 .nav-right i.icon-adjust {
   position: static;
   top: 0;

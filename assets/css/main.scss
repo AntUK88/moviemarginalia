@@ -1,4 +1,6 @@
-// Your existing variables (do not modify)
+---
+---
+
 $base-font-family: 'Roboto', sans-serif;
 $body-font-family: 'Roboto', sans-serif;
 $code-font-family: "Source Code Pro", monospace;
@@ -25,21 +27,3 @@ $codepen-color: black;
 $rss-color: #ff6600;
 
 @import "-sections-dir";
-
-// New styles to add below
-
-.content-wrapper {
-  padding-top: 4rem; // adds space between header and page content
-}
-
-.page h1 {
-  font-size: 2rem; // smaller page title size
-  margin-bottom: 1rem;
-}
-
-.signature {
-  text-align: right;
-  margin-top: 3rem;
-  font-style: italic;
-  color: #555;
-}

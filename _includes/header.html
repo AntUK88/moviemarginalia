@@ -25,114 +25,119 @@
 
   <style>
     .site-header {
-      position: relative !important;
-      display: flex !important;
-      flex-wrap: nowrap !important;
-      align-items: center !important;
-      justify-content: space-between !important;
-      margin-bottom: 2rem !important;
-      padding: 1rem 2rem !important;
-      border-bottom: 1px solid #eee !important;
-      background: #fff !important;
-      z-index: 9999 !important;
+      background: #fff;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 2rem;
     }
 
     .site-nav {
-      display: flex !important;
-      justify-content: space-between !important;
-      align-items: center !important;
-      flex-wrap: nowrap !important;
-      gap: 1.5rem !important;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 1rem;
     }
 
     .nav-left {
-      display: flex !important;
-      align-items: center !important;
-      gap: 0.6rem !important;
-      white-space: nowrap !important;
-      flex: 1 !important;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex: 1 1 20%;
+      min-width: 180px;
+      white-space: nowrap;
     }
 
     .logo-link {
-      display: flex !important;
-      align-items: center !important;
-      text-decoration: none !important;
-      color: #000 !important;
-      font-weight: 700 !important;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: #000;
+      font-weight: 700;
     }
 
     .logo-img {
-      height: 36px !important;
-      width: 36px !important;
-      object-fit: contain !important;
-      margin-right: 0.4rem !important;
+      height: 36px;
+      width: 36px;
+      object-fit: contain;
+      margin-right: 0.4rem;
     }
 
     .site-title {
-      font-size: 1.3rem !important;
-      font-weight: 700 !important;
+      font-size: 1.3rem;
+      font-weight: 700;
     }
 
     .nav-center {
-      display: flex !important;
-      gap: 1.5rem !important;
-      list-style: none !important;
-      margin: 0 auto !important;
-      padding: 0 !important;
-      flex: 2 !important;
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+      margin: 0 auto;
+      padding: 0;
+      flex: 2 1 60%;
+      justify-content: center;
     }
 
     .nav-center a {
-      text-decoration: none !important;
-      color: #000 !important;
-      font-weight: 600 !important;
-      font-size: 0.95rem !important;
+      text-decoration: none;
+      color: #000;
+      font-weight: 600;
+      font-size: 0.95rem;
+      white-space: nowrap;
     }
 
     .nav-right {
-      display: flex !important;
-      gap: 1.2rem !important;
-      list-style: none !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      flex: 1 !important;
-      justify-content: flex-end !important;
+      display: flex;
+      gap: 1.2rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      flex: 1 1 20%;
+      justify-content: flex-end;
+      min-width: 140px;
     }
 
     .nav-right a {
-      color: #000 !important;
-      font-weight: 600 !important;
-      font-size: 0.95rem !important;
-      text-decoration: none !important;
+      color: #000;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      white-space: nowrap;
     }
 
     .nav-right i {
-      font-size: 1.2rem !important;
-      vertical-align: baseline !important;
-      position: relative !important;
-      top: 2px !important;
+      font-size: 1.2rem;
+      vertical-align: baseline;
+      position: relative;
+      top: 2px;
     }
 
     .nav-right a:hover,
     .nav-center a:hover,
     .logo-link:hover {
-      color: #444 !important;
+      color: #444;
     }
 
     .content-wrapper {
-      padding-top: 2rem !important;
+      padding-top: 2rem;
     }
 
     @media (max-width: 768px) {
       .site-nav {
-        flex-direction: column !important;
-        align-items: flex-start !important;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .nav-left,
+      .nav-center,
+      .nav-right {
+        flex: unset;
+        min-width: auto;
+        padding-top: 0.5rem;
       }
       .nav-center,
       .nav-right {
-        justify-content: flex-start !important;
-        flex-wrap: wrap !important;
-        padding-top: 0.5rem !important;
+        justify-content: flex-start;
+        flex-wrap: wrap;
       }
     }
   </style>

@@ -1,42 +1,72 @@
-<head>
-  <title>
-    {% if page.title == "Home" %}
-      {{ site.title }} | {{ site.description }}
-    {% else %}
-      {{ page.title }} | {{ site.title }}
-    {% endif %}
-  </title>
+<header class="site-header">
+  <nav class="site-nav">
+    <ul class="nav">
+      <li class="logo">
+        <a href="/">
+          <img src="{{ site.github.url }}/favicon.ico" alt="Logo" style="height: 20px; vertical-align: middle; margin-right: 8px;">
+          Movie Marginalia
+        </a>
+      </li>
+      <li><a href="/">Home</a></li>
+      <li><a href="/writing">Writing</a></li>
+      <li><a href="/selected">Selected Pieces</a></li>
+      <li><a href="/photos">Photography</a></li>
+      <li><a href="/about">About</a></li>
+    </ul>
+    <ul class="social-icons">
+      <li><a href="https://www.instagram.com/moviemarginalia" target="_blank"><i class="fa fa-instagram"></i></a></li>
+      <li><a href="https://boxd.it/1yzWH" target="_blank"><i class="fa fa-film"></i></a></li>
+      <li><a href="https://youtube.com/@moviemarginalia" target="_blank"><i class="fa fa-youtube-play"></i></a></li>
+      <li><a href="mailto:moviemarginalia@gmail.com"><i class="fa fa-envelope"></i></a></li>
+    </ul>
+  </nav>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta charset="utf-8">
+  <style>
+    .site-header {
+      background: #fff;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
 
-  <!-- Favicon -->
-  <link rel="icon" href="{{ site.github.url }}/favicon.ico" type="image/x-icon">
+    .site-nav {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="{{ site.github.url }}/assets/css/main.css">
-  <link rel="stylesheet" href="{{ site.github.url }}/assets/css/syntax.css">
+    .nav, .social-icons {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+    }
 
-  <!-- RSS Feed -->
-  {% feed_meta %}
-  <!-- RSS-v2.0
-  <link href="{{ site.github.url }}/rss-feed.xml" type="application/rss+xml" rel="alternate" title="{{ site.title }} | {{ site.description }}"/>
-  //-->
+    .nav a, .social-icons a {
+      text-decoration: none;
+      color: #000;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
 
-  <!-- Fonts -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Source+Code+Pro">
+    .nav .logo a {
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
 
-  <!-- Font Awesome (for icons) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    .social-icons i {
+      font-size: 1.1rem;
+    }
 
-  <!-- MathJax -->
-  <script type="text/javascript" async
-    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
-  </script>
-
-  <!-- Google Analytics -->
-  {% include google-analytics.html %}
-
-  <!-- SEO plugin -->
-  {% seo %}
-</head>
+    .social-icons a:hover {
+      color: #555;
+    }
+  </style>
+</header>

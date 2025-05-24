@@ -1,6 +1,6 @@
 ---
 layout: page
-title: About Movie Marginalia...
+title: 
 permalink: /about
 ---
 

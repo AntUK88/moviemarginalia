@@ -22,11 +22,11 @@ permalink: /photography/
 </div>
 
 <style>
-  .carousel-wrapper {
-    max-width: 1200px;
-    margin: 3rem auto;
-    text-align: center;
-  }
+ .carousel-wrapper {
+  max-width: 1200px;
+  margin: 2rem auto 1rem auto; /* Less top + bottom space */
+  text-align: center;
+}
 
   .carousel {
     display: flex;
@@ -34,7 +34,7 @@ permalink: /photography/
     align-items: center;
     overflow: hidden;
     position: relative;
-    height: 700px;
+    height: 500px;
   }
 
   .carousel-item {
@@ -65,16 +65,16 @@ permalink: /photography/
   }
 
   .photo-caption {
-    margin: 1.5rem auto;
-    font-style: italic;
-    max-width: 700px;
-    line-height: 1.5;
-    color: #444;
-  }
+  margin: 1rem auto 0.5rem auto; /* Top/bottom spacing reduced */
+  font-style: italic;
+  max-width: 700px;
+  line-height: 1.4;
+  color: #444;
+}
 
-  .carousel-buttons {
-    margin-top: 1rem;
-  }
+ .carousel-buttons {
+  margin-top: 0.5rem; /* Previously 1rem */
+}
 
   .carousel-buttons button {
     font-size: 2rem;

@@ -41,27 +41,28 @@
 
 .nav-left {
   display: flex;
-  align-items: center;
+  align-items: center;   /* this centers vertically */
   gap: 0.5rem;
   flex: 1 1 20%;
   min-width: 180px;
   white-space: nowrap;
+  line-height: 1;        /* make sure line height matches */
+  font-size: 1.3rem;     /* same font size as the logo text */
 }
 
 .logo-link {
   display: flex;
-  align-items: center;
+  align-items: center;   /* center the icon and text */
   text-decoration: none;
   color: #000;
   font-weight: 700;
   font-size: 1.3rem;
   line-height: 1;
+  vertical-align: middle; /* extra safeguard */
 }
 
 .logo-img {
-  height: 28px;
-  width: auto;
-  object-fit: contain;
+  height: 28px;           /* make sure icon height fits nicely */
   margin-right: 0.4rem;
   vertical-align: middle;
 }

@@ -27,7 +27,7 @@ jobs:
         run: pip install requests beautifulsoup4
 
       - name: Run import script
-        run: python3 scripts/import_review.py "${{ github.event.inputs.review_url }}"
+        run: python3 scripts/import_review.py "${{ github.event.inputs.review_url }}" "${{ github.event.inputs.review_date }}"
 
       - name: Commit and push new review
         run: |

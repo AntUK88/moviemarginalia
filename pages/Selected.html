@@ -13,7 +13,8 @@ permalink: /selected/
 </div>
 
 <div class="selected-list">
-  {% assign reviews = site.selected | default: empty | sort: 'date' | reverse %}
+  {% assign raw = site.selected | default: empty %}
+  {% assign reviews = raw | where_exp: "item", "item.date != nil" | sort: 'date' | reverse %}
   {% if reviews.size > 0 %}
     {% for review in reviews %}
     <div class="selected-item">

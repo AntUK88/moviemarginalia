@@ -13,10 +13,7 @@ permalink: /selected/
 </div>
 
 <div class="selected-list">
-  {% assign raw = site.selected | default: empty %}
-  {% assign reviews = raw | where_exp: "item", "item.date != nil" | sort: 'date' | reverse %}
-  {% if reviews.size > 0 %}
-    {% for review in reviews %}
+  {% for review in site.selected reversed %}
     <div class="selected-item">
       <div class="selected-meta">
         <span class="selected-date">{{ review.date | date: "%d %b %Y" }}</span>
@@ -30,10 +27,9 @@ permalink: /selected/
       </div>
       <a href="{{ review.url }}" class="selected-read-more">Read →</a>
     </div>
-    {% endfor %}
   {% else %}
     <p style="font-family: Georgia, serif; color: #666; font-style: italic;">No pieces yet.</p>
-  {% endif %}
+  {% endfor %}
 </div>
 
 <style>

@@ -7,7 +7,7 @@
       </a>
     </div>
 
-    <!-- Hamburger for mobile -->
+    <!-- Hamburger for mobile — sits at the right end of the nav row -->
     <button class="nav-toggle" aria-label="Toggle navigation" onclick="toggleMenu()">&#9776;</button>
 
     <div class="nav-right" id="nav-right">
@@ -43,6 +43,7 @@
     align-items: center;
     max-width: 1100px;
     margin: 0 auto;
+    flex-wrap: wrap;
   }
 
   .nav-left {
@@ -92,9 +93,7 @@
     white-space: nowrap;
   }
 
-  .menu-link:hover {
-    color: #555;
-  }
+  .menu-link:hover { color: #555; }
 
   .social-icons a {
     color: #000;
@@ -104,11 +103,9 @@
     text-decoration: none !important;
   }
 
-  .social-icons a:hover {
-    color: #555;
-  }
+  .social-icons a:hover { color: #555; }
 
-  /* Hamburger button — hidden on desktop */
+  /* Hamburger — hidden on desktop */
   .nav-toggle {
     display: none;
     background: none;
@@ -117,39 +114,45 @@
     cursor: pointer;
     color: #000;
     padding: 0.25rem 0.5rem;
+    margin-left: auto; /* pushes it to the far right */
   }
 
-  /* Mobile styles */
+  /* ── Mobile ── */
   @media (max-width: 700px) {
     .site-header {
       padding: 0.75rem 1.25rem;
+    }
+
+    .site-nav {
+      flex-wrap: wrap;
+      align-items: center;
     }
 
     .nav-toggle {
       display: block;
     }
 
+    /* Dropdown fills full width below the logo/hamburger row */
     .nav-right {
       display: none;
       flex-direction: column;
-      align-items: flex-start;
+      align-items: flex-start; /* text left-aligned */
       gap: 1rem;
       width: 100%;
       padding: 1rem 0 0.5rem 0;
+      border-top: 1px solid #e5e0d8;
+      margin-top: 0.5rem;
     }
 
     .nav-right.open {
       display: flex;
     }
 
-    .site-nav {
-      flex-wrap: wrap;
-    }
-
     .menu-links {
       flex-direction: column;
       align-items: flex-start;
       gap: 0.75rem;
+      width: 100%;
     }
 
     .social-icons {

@@ -66,9 +66,7 @@ def html_to_markdown(element):
             else:
                 result.append(text)
         else:
-            # Plain text node
             result.append(str(node))
-    # Clean up non-breaking spaces
     return "".join(result).replace("\u00a0", " ").strip()
 
 
@@ -96,9 +94,8 @@ def parse_review(html, url):
             if rating_text:
                 break
 
- # --- Review date ---
+    # --- Review date ---
     review_date = datetime.today().strftime("%Y-%m-%d")
-    # Try the "Watched" date first — format: "27 May 2023"
     watched_el = soup.select_one("span.date a") or soup.select_one("time.date") or soup.select_one("p.date a")
     if watched_el:
         raw = watched_el.get_text(strip=True)
@@ -196,7 +193,7 @@ def build_jekyll_post(data):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python3 scripts/import_review.py <letterboxd-review-url>")
+        print("Usage: python3 scripts/import_review.py <url> [YYYY-MM-DD]")
         sys.exit(1)
 
     url = sys.argv[1].strip()
@@ -204,15 +201,24 @@ def main():
         print("Error: URL must be a Letterboxd URL")
         sys.exit(1)
 
+    # Optional manual date override
+    manual_date = sys.argv[2].strip() if len(sys.argv) > 2 and sys.argv[2].strip() else None
+
     print(f"Fetching: {url}")
     html, canonical_url = fetch_page(url)
 
     print("Parsing review...")
     data = parse_review(html, canonical_url)
 
+    # Apply manual date override if provided
+    if manual_date and re.match(r"\d{4}-\d{2}-\d{2}", manual_date):
+        data["date"] = manual_date
+        print(f"  Date:   {data['date']} (manual override)")
+    else:
+        print(f"  Date:   {data['date']}")
+
     print(f"  Film:   {data['film_title']} ({data['film_year']})")
     print(f"  Rating: {data['rating']}")
-    print(f"  Date:   {data['date']}")
     print(f"  Words:  {len(data['body'].split())}")
 
     if data['film_title'] == "Unknown Film":

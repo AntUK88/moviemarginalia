@@ -39,51 +39,53 @@ def fetch_page(url):
     session = requests.Session()
     session.get("https://letterboxd.com/", headers=HEADERS, timeout=15)
 
-    # Normalise URL
     if not url.endswith("/"):
         url = url + "/"
 
-    # Try the spoiler-bypass URL first
+    # Try spoiler-bypass URL first
     spoiler_url = url + "reveal-spoilers/"
     r = session.get(spoiler_url, headers=HEADERS, timeout=15)
-
     if r.status_code != 200:
         r = session.get(url, headers=HEADERS, timeout=15)
 
     r.raise_for_status()
-    # Return html and the canonical base URL (strip reveal-spoilers suffix)
     canonical = r.url.replace("reveal-spoilers/", "")
     return r.text, canonical
+
+
+def html_to_markdown(element):
+    """Convert an HTML element's contents to markdown, preserving italics."""
+    result = []
+    for node in element.children:
+        if hasattr(node, 'name'):
+            text = node.get_text()
+            if node.name in ('em', 'i'):
+                result.append(f"*{text}*")
+            elif node.name in ('strong', 'b'):
+                result.append(f"**{text}**")
+            else:
+                result.append(text)
+        else:
+            # Plain text node
+            result.append(str(node))
+    # Clean up non-breaking spaces
+    return "".join(result).replace("\u00a0", " ").strip()
 
 
 def parse_review(html, url):
     soup = BeautifulSoup(html, "html.parser")
 
-    # --- Film title ---
-    # Letterboxd puts the film title in <h1 class="headline-1 prettify">
+    # --- Film title: h2.primaryname.prettify > a ---
     film_title = "Unknown Film"
-    for sel in [
-        "h1.prettify",
-        "h1.headline-1",
-        ".film-title-wrapper h1",
-        "section.film-header h1",
-    ]:
-        el = soup.select_one(sel)
-        if el:
-            # The year is in a <small> inside the h1 — extract it separately then strip
-            small = el.find("small")
-            if small:
-                small.extract()
-            film_title = el.get_text(strip=True)
-            break
+    title_el = soup.select_one("h2.primaryname a") or soup.select_one("h2.prettify a")
+    if title_el:
+        film_title = title_el.get_text(strip=True)
 
-    # --- Film year ---
+    # --- Film year: span.releasedate > a ---
     film_year = ""
-    for sel in ["h1.prettify small", "h1.headline-1 small", ".film-title-wrapper small", "small.number"]:
-        el = soup.select_one(sel)
-        if el:
-            film_year = el.get_text(strip=True).strip("()")
-            break
+    year_el = soup.select_one("span.releasedate a") or soup.select_one("span.releasedate")
+    if year_el:
+        film_year = year_el.get_text(strip=True).strip("()")
 
     # --- Star rating ---
     rating_text = ""
@@ -94,13 +96,12 @@ def parse_review(html, url):
             if rating_text:
                 break
 
-    # --- Review date: use the <time> element with a datetime attribute ---
+    # --- Review date ---
     review_date = datetime.today().strftime("%Y-%m-%d")
     for sel in ["time[datetime]", "span.date time", "._nobr time"]:
         el = soup.select_one(sel)
         if el and el.get("datetime"):
             raw = el["datetime"][:10]
-            # Validate it looks like a date
             if re.match(r"\d{4}-\d{2}-\d{2}", raw):
                 review_date = raw
                 break
@@ -113,21 +114,17 @@ def parse_review(html, url):
     )
 
     if not body_el:
-        raise ValueError(
-            "Could not find review body. "
-            "The page may be behind a spoiler wall or the structure has changed."
-        )
+        raise ValueError("Could not find review body.")
 
-    # Remove any spoiler toggle banners
+    # Remove spoiler banners
     for el in body_el.select(".contains-spoilers, .spoiler-warning"):
         el.decompose()
 
+    # Convert paragraphs to markdown, preserving italics/bold
     paragraphs = []
     for p in body_el.find_all("p"):
-        text = p.get_text(separator=" ").strip()
+        text = html_to_markdown(p)
         text = text.replace(SPOILER_WARNING, "").strip()
-        # Clean up non-breaking spaces
-        text = text.replace("\u00a0", " ").strip()
         if text:
             paragraphs.append(text)
 
@@ -206,8 +203,10 @@ def main():
     print(f"  Date:   {data['date']}")
     print(f"  Words:  {len(data['body'].split())}")
 
+    if data['film_title'] == "Unknown Film":
+        print("WARNING: Could not find film title.")
     if len(data['body'].split()) < 5:
-        print("WARNING: Review body seems very short — spoiler wall may still be blocking.")
+        print("WARNING: Review body very short — spoiler wall may still be blocking.")
 
     filename, content = build_jekyll_post(data)
 
@@ -216,11 +215,11 @@ def main():
     output_path = output_dir / filename
 
     if output_path.exists():
-        print(f"Note: overwriting existing file {output_path}")
+        print(f"Note: overwriting {output_path}")
 
     output_path.write_text(content, encoding="utf-8")
     print(f"\nCreated: {output_path}")
-    print("\n--- Preview (first 600 chars) ---")
+    print("\n--- Preview ---")
     print(content[:600])
     print("...")
 

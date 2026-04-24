@@ -1,6 +1,6 @@
 <head>
   <title>
-    {% if page.title == "Home" %}
+    {% if page.title == "" or page.title == nil %}
       {{ site.title }} | {{ site.description }}
     {% else %}
       {{ page.title }} | {{ site.title }}
@@ -11,23 +11,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Favicon -->
-  <link rel="icon" href="{{ site.github.url }}/assets/img/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon">
 
   <!-- CSS -->
-  <link rel="stylesheet" href="{{ site.github.url }}/assets/css/main.css">
-  <link rel="stylesheet" href="{{ site.github.url }}/assets/css/syntax.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/syntax.css">
 
   <!-- RSS Feed -->
   {% feed_meta %}
 
   <!-- Fonts -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Source+Code+Pro">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-  <!-- MathJax -->
-  <script type="text/javascript" async
-    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
-  </script>
 
   <!-- Google Analytics -->
   {% include google-analytics.html %}
@@ -35,7 +30,6 @@
   <!-- SEO plugin -->
   {% seo %}
 
-  <!-- Global Styles -->
   <style>
     html, body {
       background-color: #fff7ed;

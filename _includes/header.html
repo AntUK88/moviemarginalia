@@ -2,129 +2,165 @@
   <nav class="site-nav">
     <div class="nav-left">
       <a href="/" class="logo-link">
-        <img src="{{ site.github.url }}/assets/img/favicon.ico" alt="Logo" class="logo-img" />
+        <img src="/assets/img/favicon.ico" alt="Logo" class="logo-img" />
         Movie Marginalia
       </a>
     </div>
-    <div class="nav-right">
+
+    <!-- Hamburger for mobile -->
+    <button class="nav-toggle" aria-label="Toggle navigation" onclick="toggleMenu()">&#9776;</button>
+
+    <div class="nav-right" id="nav-right">
       <ul class="menu-links">
-        <li>
-  <a href="https://moviemarginalia.substack.com" class="menu-link" target="_blank" rel="noopener noreferrer">Writing</a>
-</li>
+        <li><a href="https://moviemarginalia.substack.com" class="menu-link" target="_blank" rel="noopener noreferrer">Writing</a></li>
         <li><a href="/selected" class="menu-link">Selected Pieces</a></li>
-        <li><a href="http://moviemarginalia.com/photography/" class="menu-link">Photography</a></li>
+        <li><a href="/photography/" class="menu-link">Photography</a></li>
       </ul>
       <ul class="social-icons">
-        <li><a href="https://www.instagram.com/moviemarginalia" target="_blank"><i class="fa fa-instagram"></i></a></li>
-        <li><a href="https://boxd.it/1yzWH" target="_blank"><i class="fa fa-film"></i></a></li>
-        <li><a href="https://youtube.com/@moviemarginalia" target="_blank"><i class="fa fa-youtube-play"></i></a></li>
-        <li><a href="mailto:moviemarginalia@gmail.com"><i class="fa fa-envelope"></i></a></li>
+        <li><a href="https://www.instagram.com/moviemarginalia" target="_blank" aria-label="Instagram"><i class="fa fa-instagram"></i></a></li>
+        <li><a href="https://boxd.it/1yzWH" target="_blank" aria-label="Letterboxd"><i class="fa fa-film"></i></a></li>
+        <li><a href="https://youtube.com/@moviemarginalia" target="_blank" aria-label="YouTube"><i class="fa fa-youtube-play"></i></a></li>
+        <li><a href="mailto:moviemarginalia@gmail.com" aria-label="Email"><i class="fa fa-envelope"></i></a></li>
       </ul>
     </div>
   </nav>
+</header>
 
-  <style>
-    /* Background and font set globally in next step */
+<style>
+  .site-header {
+    background: #fff7ed;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid #e5e0d8;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    font-family: Georgia, "Times New Roman", serif;
+  }
 
+  .site-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .nav-left {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none !important;
+    color: #000;
+    font-weight: 700;
+    font-size: 1.1rem;
+    font-family: Georgia, "Times New Roman", serif;
+    gap: 0.4rem;
+  }
+
+  .logo-img {
+    height: 26px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .menu-links,
+  .social-icons {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-family: Georgia, "Times New Roman", serif;
+  }
+
+  .menu-link {
+    text-decoration: none !important;
+    color: #000;
+    font-weight: 600;
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+
+  .menu-link:hover {
+    color: #555;
+  }
+
+  .social-icons a {
+    color: #000;
+    font-size: 1.15rem;
+    display: flex;
+    align-items: center;
+    text-decoration: none !important;
+  }
+
+  .social-icons a:hover {
+    color: #555;
+  }
+
+  /* Hamburger button — hidden on desktop */
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #000;
+    padding: 0.25rem 0.5rem;
+  }
+
+  /* Mobile styles */
+  @media (max-width: 700px) {
     .site-header {
-      background: #fff7ed;
-      padding: 1rem 2rem;
-      border-bottom: 1px solid #eee;
-      margin-bottom: 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: nowrap;
+      padding: 0.75rem 1.25rem;
+    }
+
+    .nav-toggle {
+      display: block;
+    }
+
+    .nav-right {
+      display: none;
+      flex-direction: column;
+      align-items: flex-start;
       gap: 1rem;
-      font-family: Georgia, "Times New Roman", serif;
+      width: 100%;
+      padding: 1rem 0 0.5rem 0;
+    }
+
+    .nav-right.open {
+      display: flex;
     }
 
     .site-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: nowrap;
-      gap: 1rem;
-      width: 100%;
+      flex-wrap: wrap;
     }
 
-    .nav-left {
-      display: flex;
-      align-items: center;
-      white-space: nowrap;
-      flex: 1 1 auto;
+    .menu-links {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
     }
 
-    .logo-link {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: #000;
-  font-weight: 700;
-  font-size: 1.1rem;
-  line-height: 1;
-  font-family: Georgia, "Times New Roman", serif;
-  position: relative;
-  top: -9px;
-}
-
-.logo-img {
-  height: 28px;
-  width: auto;
-  object-fit: contain;
-  margin-right: 0.4rem;
-  vertical-align: middle;
-  position: relative;
-  top: -6px;
-}
-
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 2rem;
-      flex: 1 1 auto;
-      justify-content: flex-end;
-      white-space: nowrap;
-    }
-
-    .menu-links,
     .social-icons {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      font-family: Georgia, "Times New Roman", serif;
+      gap: 1.25rem;
     }
+  }
+</style>
 
-    .menu-link {
-      text-decoration: none;
-      color: #000;
-      font-weight: 600;
-      font-size: 0.95rem;
-      white-space: nowrap;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-    }
-
-    .menu-link:hover {
-      color: #444;
-    }
-
-    .social-icons a {
-      color: #000;
-      font-weight: 600;
-      font-size: 1.2rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      line-height: 1;
-    }
-
-    .social-icons a:hover {
-      color: #555;
-    }
-  </style>
-</header>
+<script>
+  function toggleMenu() {
+    var nav = document.getElementById('nav-right');
+    nav.classList.toggle('open');
+  }
+</script>

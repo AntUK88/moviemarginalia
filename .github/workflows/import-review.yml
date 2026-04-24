@@ -4,8 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       review_url:
-        description: "Letterboxd review URL (e.g. https://letterboxd.com/moviemarginalia/film/little-buddha/)"
+        description: "Letterboxd review URL"
         required: true
+        type: string
+      review_date:
+        description: "Original review date (YYYY-MM-DD, e.g. 2023-05-27). Leave blank to auto-detect."
+        required: false
         type: string
 
 jobs:

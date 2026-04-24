@@ -96,15 +96,27 @@ def parse_review(html, url):
             if rating_text:
                 break
 
-    # --- Review date ---
+ # --- Review date ---
     review_date = datetime.today().strftime("%Y-%m-%d")
-    for sel in ["time[datetime]", "span.date time", "._nobr time"]:
-        el = soup.select_one(sel)
-        if el and el.get("datetime"):
-            raw = el["datetime"][:10]
-            if re.match(r"\d{4}-\d{2}-\d{2}", raw):
-                review_date = raw
+    # Try the "Watched" date first — format: "27 May 2023"
+    watched_el = soup.select_one("span.date a") or soup.select_one("time.date") or soup.select_one("p.date a")
+    if watched_el:
+        raw = watched_el.get_text(strip=True)
+        for fmt in ("%d %b %Y", "%B %d, %Y", "%Y-%m-%d"):
+            try:
+                review_date = datetime.strptime(raw, fmt).strftime("%Y-%m-%d")
                 break
+            except ValueError:
+                continue
+    # Fallback: datetime attribute
+    if review_date == datetime.today().strftime("%Y-%m-%d"):
+        for sel in ["time[datetime]", "span._nobr time"]:
+            el = soup.select_one(sel)
+            if el and el.get("datetime"):
+                raw = el["datetime"][:10]
+                if re.match(r"\d{4}-\d{2}-\d{2}", raw):
+                    review_date = raw
+                    break
 
     # --- Review body ---
     body_el = (

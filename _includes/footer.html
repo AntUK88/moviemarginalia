@@ -11,12 +11,15 @@
   .site-footer {
     border-top: 1px solid var(--rule);
     padding: 1rem 2.5rem;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
     background: var(--cream);
     box-sizing: border-box;
     width: 100%;
+  }
+  .site-footer > a {
+    text-align: right;
   }
   .site-footer span,
   .site-footer > a {

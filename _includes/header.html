@@ -1,6 +1,9 @@
 <header class="site-header">
   <nav class="site-nav">
-    <a href="/" class="site-name">Movie Marginalia</a>
+    <a href="/" class="site-name">
+      <img src="/assets/img/logo.png" alt="Movie Marginalia logo" class="site-logo">
+      Movie Marginalia
+    </a>
     <button class="nav-toggle" aria-label="Toggle navigation" onclick="toggleMenu()">&#9776;</button>
     <div class="nav-right" id="nav-right">
       <ul class="menu-links">
@@ -45,6 +48,15 @@
     letter-spacing: 0.06em;
     color: var(--ink);
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    line-height: 1;
+  }
+  .site-logo {
+    height: 28px;
+    width: auto;
+    display: block;
   }
   .nav-right {
     display: flex;
@@ -67,6 +79,7 @@
     color: var(--muted);
     text-decoration: none;
     transition: color 0.2s;
+    line-height: 1;
   }
   .menu-links a:hover { color: var(--ink); }
   .nav-toggle {

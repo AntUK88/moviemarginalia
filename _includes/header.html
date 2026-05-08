@@ -1,18 +1,11 @@
 <header class="site-header">
   <nav class="site-nav">
-    <div class="nav-left">
-      <a href="/" class="logo-link">
-        <img src="/assets/img/favicon.ico" alt="Logo" class="logo-img" />
-        Movie Marginalia
-      </a>
-    </div>
-    <!-- Hamburger for mobile — sits at the right end of the nav row -->
+    <a href="/" class="site-name">Movie Marginalia</a>
     <button class="nav-toggle" aria-label="Toggle navigation" onclick="toggleMenu()">&#9776;</button>
     <div class="nav-right" id="nav-right">
       <ul class="menu-links">
-        <li><a href="https://moviemarginalia.substack.com" class="menu-link" target="_blank" rel="noopener noreferrer">Writing</a></li>
-        <li><a href="/selected" class="menu-link">Selected Pieces</a></li>
-        <li><a href="/photography/" class="menu-link">Photography</a></li>
+        <li><a href="https://moviemarginalia.substack.com" target="_blank" rel="noopener noreferrer">Writing</a></li>
+        <li><a href="/selected">Selected Pieces</a></li>
       </ul>
       <ul class="social-icons">
         <li><a href="https://www.instagram.com/moviemarginalia" target="_blank" aria-label="Instagram"><i class="fa fa-instagram"></i></a></li>
@@ -24,14 +17,20 @@
   </nav>
 </header>
 <style>
+  :root {
+    --ink: #1a1814;
+    --muted: #8a8478;
+    --rule: #d8d2c8;
+    --cream: #fff7ed;
+  }
   .site-header {
-    background: #fff7ed;
-    padding: 1rem 2rem;
-    border-bottom: 1px solid #e5e0d8;
+    background: var(--cream);
+    height: 56px;
+    padding: 0 2.5rem;
+    border-bottom: 1px solid var(--rule);
     position: sticky;
     top: 0;
     z-index: 100;
-    font-family: Georgia, "Times New Roman", serif;
     box-sizing: border-box;
     width: 100%;
   }
@@ -39,29 +38,17 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 100%;
     max-width: 1100px;
     margin: 0 auto;
-    flex-wrap: wrap;
   }
-  .nav-left {
-    display: flex;
-    align-items: center;
-    flex: 1;
-  }
-  .logo-link {
-    display: flex;
-    align-items: center;
-    text-decoration: none !important;
-    color: #000;
-    font-weight: 700;
-    font-size: 1.1rem;
-    font-family: Georgia, "Times New Roman", serif;
-    gap: 0.4rem;
-  }
-  .logo-img {
-    height: 26px;
-    width: auto;
-    object-fit: contain;
+  .site-name {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-weight: 400;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    text-decoration: none;
   }
   .nav-right {
     display: flex;
@@ -75,67 +62,61 @@
     margin: 0;
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-    font-family: Georgia, "Times New Roman", serif;
+    gap: 2rem;
   }
-  .menu-link {
-    text-decoration: none !important;
-    color: #000;
-    font-weight: 600;
-    font-size: 0.95rem;
-    white-space: nowrap;
+  .menu-links a {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
   }
-  .menu-link:hover { color: #555; }
+  .menu-links a:hover { color: var(--ink); }
   .social-icons a {
-    color: #000;
-    font-size: 1.15rem;
+    font-size: 0.85rem;
+    color: var(--muted);
     display: flex;
     align-items: center;
-    text-decoration: none !important;
+    text-decoration: none;
+    transition: color 0.2s;
   }
-  .social-icons a:hover { color: #555; }
-  /* Hamburger — hidden on desktop */
+  .social-icons a:hover { color: var(--ink); }
   .nav-toggle {
     display: none;
     background: none;
     border: none;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     cursor: pointer;
-    color: #000;
-    padding: 0.25rem 0;
+    color: var(--muted);
+    padding: 0;
     flex-shrink: 0;
   }
-  /* ── Mobile ── */
-  @media (max-width: 700px) {
+  @media (max-width: 680px) {
     .site-header {
-      padding: 0.75rem 1.25rem;
-      box-sizing: border-box;
+      height: 48px;
+      padding: 0 1.25rem;
     }
     .site-nav {
       flex-wrap: wrap;
-      align-items: center;
-      width: 100%;
-      box-sizing: border-box;
+      height: auto;
+      padding: 0.75rem 0;
     }
-    .nav-left {
+    .site-name {
       flex: 1;
-      min-width: 0;
     }
     .nav-toggle {
       display: block;
-      flex-shrink: 0;
-      padding: 0.25rem 0;
-      margin-left: 0.5rem;
     }
-    /* Dropdown fills full width below the logo/hamburger row */
     .nav-right {
       display: none;
       flex-direction: column;
       align-items: flex-start;
       gap: 1rem;
       width: 100%;
-      padding: 1rem 0 0.5rem 0;
-      border-top: 1px solid #e5e0d8;
+      padding: 1rem 0 0.5rem;
+      border-top: 1px solid var(--rule);
       margin-top: 0.5rem;
     }
     .nav-right.open {
@@ -145,7 +126,6 @@
       flex-direction: column;
       align-items: flex-start;
       gap: 0.75rem;
-      width: 100%;
     }
     .social-icons {
       gap: 1.25rem;
@@ -154,7 +134,6 @@
 </style>
 <script>
   function toggleMenu() {
-    var nav = document.getElementById('nav-right');
-    nav.classList.toggle('open');
+    document.getElementById('nav-right').classList.toggle('open');
   }
 </script>

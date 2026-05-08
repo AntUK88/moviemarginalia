@@ -40,6 +40,9 @@ h4, h5, h6 {
 /* Body */
 body {
   font-family: $base-font-family;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 body img {
   align: middle;

@@ -6,7 +6,7 @@ permalink: /selected/
 
 <div style="height: 1rem;"></div>
 
-<div style="font-family: Georgia, serif; font-size: 1rem; line-height: 1.6; margin-bottom: 2rem;">
+<div style="font-size: 1rem; line-height: 1.75; margin-bottom: 2rem;">
   A selection of writing on film. Originally published on
   <a href="https://letterboxd.com/moviemarginalia/" style="color: inherit; text-decoration: underline;">Letterboxd</a>
   and <a href="https://moviemarginalia.substack.com" style="color: inherit; text-decoration: underline;">Substack</a>.
@@ -28,21 +28,20 @@ permalink: /selected/
       <a href="{{ review.url }}" class="selected-read-more">Read →</a>
     </div>
   {% else %}
-    <p style="font-family: Georgia, serif; color: #666; font-style: italic;">No pieces yet.</p>
+    <p style="color: #8a8478; font-style: italic;">No pieces yet.</p>
   {% endfor %}
 </div>
 
 <style>
-  .selected-list { font-family: Georgia, "Times New Roman", serif; }
-  .selected-item { padding: 1.5rem 0; border-bottom: 1px solid #e5e0d8; }
+  .selected-item { padding: 1.5rem 0; border-bottom: 1px solid #d8d2c8; }
   .selected-item:last-child { border-bottom: none; }
-  .selected-meta { font-size: 0.8rem; color: #888; margin-bottom: 0.35rem; display: flex; gap: 1rem; align-items: center; }
+  .selected-meta { font-size: 0.78rem; letter-spacing: 0.06em; color: #8a8478; margin-bottom: 0.35rem; display: flex; gap: 1rem; align-items: center; }
   .selected-rating { font-size: 0.95rem; letter-spacing: 0.05em; }
-  .selected-title { font-size: 1.15rem; font-weight: 600; margin: 0 0 0.5rem 0; }
-  .selected-title a { text-decoration: none !important; color: #000; }
-  .selected-title a:hover { color: #555; }
-  .selected-year { font-weight: 400; color: #666; font-size: 1rem; }
-  .selected-excerpt { font-size: 0.95rem; line-height: 1.65; color: #333; margin-bottom: 0.6rem; }
-  .selected-read-more { font-size: 0.85rem; color: #555; text-decoration: none !important; }
-  .selected-read-more:hover { color: #000; }
+  .selected-title { font-size: 1.15rem; font-weight: 500; margin: 0 0 0.5rem 0; }
+  .selected-title a { text-decoration: none !important; color: #1a1814; }
+  .selected-title a:hover { color: #8a8478; }
+  .selected-year { font-weight: 400; color: #8a8478; font-size: 1rem; }
+  .selected-excerpt { font-size: 1rem; line-height: 1.75; color: #1a1814; margin-bottom: 0.6rem; }
+  .selected-read-more { font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: #8a8478; text-decoration: none !important; }
+  .selected-read-more:hover { color: #1a1814; }
 </style>

@@ -9,11 +9,6 @@
         <li><a href="/bio">Bio</a></li>
         <li><a href="mailto:hello@moviemarginalia.com">Contact</a></li>
       </ul>
-      <ul class="social-icons">
-        <li><a href="https://www.instagram.com/moviemarginalia" target="_blank" aria-label="Instagram"><i class="fa fa-instagram"></i></a></li>
-        <li><a href="https://boxd.it/1yzWH" target="_blank" aria-label="Letterboxd"><i class="fa fa-film"></i></a></li>
-        <li><a href="https://youtube.com/@moviemarginalia" target="_blank" aria-label="YouTube"><i class="fa fa-youtube-play"></i></a></li>
-      </ul>
     </div>
   </nav>
 </header>
@@ -56,8 +51,7 @@
     align-items: center;
     gap: 2rem;
   }
-  .menu-links,
-  .social-icons {
+  .menu-links {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -75,15 +69,6 @@
     transition: color 0.2s;
   }
   .menu-links a:hover { color: var(--ink); }
-  .social-icons a {
-    font-size: 0.85rem;
-    color: var(--muted);
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  .social-icons a:hover { color: var(--ink); }
   .nav-toggle {
     display: none;
     background: none;
@@ -127,9 +112,6 @@
       flex-direction: column;
       align-items: flex-start;
       gap: 0.75rem;
-    }
-    .social-icons {
-      gap: 1.25rem;
     }
   }
 </style>

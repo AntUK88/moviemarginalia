@@ -57,6 +57,7 @@
     height: 28px;
     width: auto;
     display: block;
+    margin: 0;
   }
   .nav-right {
     display: flex;
@@ -95,7 +96,8 @@
   }
   @media (max-width: 680px) {
     .site-header {
-      height: 48px;
+      height: auto;
+      min-height: 48px;
       padding: 0 1.25rem;
     }
     .site-nav {

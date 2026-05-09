@@ -48,12 +48,15 @@
     transition: color 0.2s;
   }
   .footer-icons a:hover { color: var(--ink); }
+  .footer-icons li {
+    margin-bottom: 0;
+  }
   @media (max-width: 680px) {
     .site-footer {
       padding: 1rem 1.25rem;
-      flex-direction: column;
-      gap: 0.75rem;
-      text-align: center;
+    }
+    .site-footer span {
+      white-space: nowrap;
     }
   }
 </style>

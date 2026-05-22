@@ -142,7 +142,15 @@ def main():
         p for p in AUDIO_DIR.iterdir()
         if p.is_file() and p.suffix.lower() in AUDIO_EXTENSIONS and not p.name.startswith(".")
     )
+    present_filenames = {p.name for p in audio_files}
 
+    # Remove entries whose files have been deleted
+    kept = [e for e in archive if e["filename"] in present_filenames]
+    removed = len(archive) - len(kept)
+    if removed:
+        print(f"Removed {removed} deleted {'entry' if removed == 1 else 'entries'}.")
+
+    # Add entries for new files
     new_entries = []
     for path in audio_files:
         entry = process_file(path, existing_filenames)
@@ -150,11 +158,12 @@ def main():
             new_entries.append(entry)
 
     if new_entries:
-        archive.extend(new_entries)
-        save_archive(archive)
         print(f"\nAdded {len(new_entries)} new {'entry' if len(new_entries) == 1 else 'entries'}.")
+
+    if removed or new_entries:
+        save_archive(kept + new_entries)
     else:
-        print("\nNo new audio files found.")
+        print("No changes.")
 
 
 if __name__ == "__main__":

@@ -11,7 +11,7 @@ sitemap: false
     <title>{{ site.title }} — Voice Notes</title>
     <link>{{ site.url }}/voicenotes/</link>
     <atom:link href="{{ site.url }}/voicenotes/feed.xml" rel="self" type="application/rss+xml"/>
-    <description>Audio voice notes on film by {{ site.author }}</description>
+    <description>Notes on the experience of cinema by {{ site.author }}.</description>
     <language>en-us</language>
     <itunes:author>{{ site.author }}</itunes:author>
     <itunes:explicit>no</itunes:explicit>

@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 """
 Scans audio/ for files not yet in _data/audio_archive.json, fetches
-metadata from Letterboxd via JSON-LD (no API key required), then
-appends new entries and writes the updated JSON.
+metadata from TMDb, then appends new entries and writes the updated JSON.
 
 Filename convention: <letterboxd-slug>.m4a
-Example:             the-godfather.m4a
+Example:             the-godfather.m4a  /  sabrina-1995.m4a
+
+The slug is converted to a title search query. If the slug ends with a
+4-digit year (e.g. sabrina-1995), that year is used to filter results.
 """
 
+import os
+import re
 import json
 import datetime
-import re
 from pathlib import Path
 
 import requests
@@ -20,15 +23,14 @@ REPO_ROOT = Path(__file__).parent.parent
 AUDIO_DIR = REPO_ROOT / "audio"
 ARCHIVE_PATH = REPO_ROOT / "_data" / "audio_archive.json"
 
-LETTERBOXD_BASE = "https://letterboxd.com/film"
+TMDB_BASE = "https://api.themoviedb.org/3"
+TMDB_IMG_BASE = "https://image.tmdb.org/t/p/w185"
 AUDIO_EXTENSIONS = {".m4a", ".mp3", ".ogg", ".opus", ".wav", ".aac", ".flac"}
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/124.0.0.0 Safari/537.36"
-    )
-}
+
+BEARER_TOKEN = os.environ["TMDB_API_KEY"]
+HEADERS = {"Authorization": f"Bearer {BEARER_TOKEN}", "Accept": "application/json"}
+
+YEAR_SUFFIX_RE = re.compile(r"^(.*)-(\d{4})$")
 
 
 def load_archive():
@@ -54,51 +56,29 @@ def get_duration(path):
     return None
 
 
-def letterboxd_metadata(slug):
-    url = f"{LETTERBOXD_BASE}/{slug}/"
-    r = requests.get(url, headers=HEADERS, timeout=15)
+def slug_to_title_and_year(slug):
+    m = YEAR_SUFFIX_RE.match(slug)
+    if m:
+        return m.group(1).replace("-", " "), int(m.group(2))
+    return slug.replace("-", " "), None
+
+
+def tmdb_search(title, year=None):
+    params = {"query": title, "include_adult": False}
+    if year:
+        params["primary_release_year"] = year
+    r = requests.get(f"{TMDB_BASE}/search/movie", headers=HEADERS, params=params, timeout=15)
     r.raise_for_status()
+    results = r.json().get("results", [])
+    return results[0] if results else None
 
-    blocks = re.findall(
-        r'<script type="application/ld\+json">\s*(.*?)\s*</script>',
-        r.text, re.DOTALL
-    )
 
-    data = None
-    for block in blocks:
-        if not block.strip():
-            continue
-        try:
-            parsed = json.loads(block)
-            if parsed.get("@type") == "Movie":
-                data = parsed
-                break
-        except (json.JSONDecodeError, AttributeError):
-            continue
-
-    if not data:
-        return None
-
-    title = data.get("name")
-    year_raw = data.get("datePublished", "")
-    year = int(str(year_raw)[:4]) if year_raw else None
-    poster = data.get("image")
-
-    directors = data.get("director", [])
-    if isinstance(directors, list):
-        director = directors[0].get("name") if directors else None
-    elif isinstance(directors, dict):
-        director = directors.get("name")
-    else:
-        director = None
-
-    return {
-        "title": title,
-        "year": year,
-        "director": director,
-        "poster": poster,
-        "letterboxd_url": url,
-    }
+def tmdb_director(tmdb_id):
+    r = requests.get(f"{TMDB_BASE}/movie/{tmdb_id}/credits", headers=HEADERS, timeout=15)
+    r.raise_for_status()
+    crew = r.json().get("crew", [])
+    directors = [m["name"] for m in crew if m.get("job") == "Director"]
+    return directors[0] if directors else None
 
 
 def process_file(path, existing_filenames):
@@ -107,32 +87,47 @@ def process_file(path, existing_filenames):
         return None
 
     slug = path.stem
-    print(f"  Processing {filename} (slug: {slug})")
+    title, year = slug_to_title_and_year(slug)
+    print(f"  Processing {filename} → searching '{title}'" + (f" ({year})" if year else ""))
 
     try:
-        meta = letterboxd_metadata(slug)
+        movie = tmdb_search(title, year)
     except Exception as e:
-        print(f"    Error fetching Letterboxd metadata: {e}")
-        meta = None
+        print(f"    TMDb search error: {e}")
+        movie = None
 
-    if not meta:
-        print(f"    No Letterboxd metadata found, using slug as title fallback")
-        meta = {
-            "title": slug.replace("-", " ").title(),
-            "year": None,
+    if not movie:
+        print(f"    No TMDb result, using slug fallback")
+        return {
+            "letterboxd_slug": slug,
+            "title": title.title(),
+            "year": year,
             "director": None,
             "poster": None,
-            "letterboxd_url": f"{LETTERBOXD_BASE}/{slug}/",
+            "filename": filename,
+            "date_added": datetime.date.today().isoformat(),
+            "duration_seconds": get_duration(path),
         }
 
-    print(f"    {meta['title']} ({meta['year']}), dir. {meta['director']}")
+    tmdb_id = movie["id"]
+    tmdb_title = movie.get("title", title.title())
+    release_date = movie.get("release_date", "")
+    tmdb_year = int(release_date[:4]) if release_date else year
+    poster_path = movie.get("poster_path")
+    poster = (TMDB_IMG_BASE + poster_path) if poster_path else None
+
+    try:
+        director = tmdb_director(tmdb_id)
+    except Exception:
+        director = None
+
+    print(f"    {tmdb_title} ({tmdb_year}), dir. {director}")
     return {
         "letterboxd_slug": slug,
-        "letterboxd_url": meta["letterboxd_url"],
-        "title": meta["title"],
-        "year": meta["year"],
-        "director": meta["director"],
-        "poster": meta["poster"],
+        "title": tmdb_title,
+        "year": tmdb_year,
+        "director": director,
+        "poster": poster,
         "filename": filename,
         "date_added": datetime.date.today().isoformat(),
         "duration_seconds": get_duration(path),

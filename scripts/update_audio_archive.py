@@ -22,7 +22,13 @@ ARCHIVE_PATH = REPO_ROOT / "_data" / "audio_archive.json"
 
 LETTERBOXD_BASE = "https://letterboxd.com/film"
 AUDIO_EXTENSIONS = {".m4a", ".mp3", ".ogg", ".opus", ".wav", ".aac", ".flac"}
-HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; moviemarginalia-archiver/1.0)"}
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/124.0.0.0 Safari/537.36"
+    )
+}
 
 
 def load_archive():
@@ -53,14 +59,25 @@ def letterboxd_metadata(slug):
     r = requests.get(url, headers=HEADERS, timeout=15)
     r.raise_for_status()
 
-    match = re.search(
-        r'<script type="application/ld\+json">(.*?)</script>',
+    blocks = re.findall(
+        r'<script type="application/ld\+json">\s*(.*?)\s*</script>',
         r.text, re.DOTALL
     )
-    if not match:
-        return None
 
-    data = json.loads(match.group(1))
+    data = None
+    for block in blocks:
+        if not block.strip():
+            continue
+        try:
+            parsed = json.loads(block)
+            if parsed.get("@type") == "Movie":
+                data = parsed
+                break
+        except (json.JSONDecodeError, AttributeError):
+            continue
+
+    if not data:
+        return None
 
     title = data.get("name")
     year_raw = data.get("datePublished", "")

@@ -26,8 +26,6 @@ jobs:
         run: pip install requests mutagen
 
       - name: Update audio archive
-        env:
-          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
         run: python3 scripts/update_audio_archive.py
 
       - name: Commit updated archive

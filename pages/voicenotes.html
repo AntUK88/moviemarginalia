@@ -1,0 +1,345 @@
+---
+layout: default
+title: Voice Notes
+permalink: /voicenotes/
+noindex: true
+sitemap: false
+---
+
+<div class="vn-page">
+  <h1 class="vn-heading">Voice Notes</h1>
+
+  <div class="vn-controls">
+    <input type="search" id="vn-search" class="vn-search" placeholder="Search by title…" autocomplete="off" aria-label="Search by film title">
+    <div class="vn-sort-bar">
+      <span class="vn-sort-label">Sort:</span>
+      <button class="vn-sort-btn active" data-sort="date_added">Date added</button>
+      <button class="vn-sort-btn" data-sort="title">A–Z</button>
+      <button class="vn-sort-btn" data-sort="year">Year</button>
+      <button class="vn-sort-btn" data-sort="duration_seconds">Duration</button>
+    </div>
+  </div>
+
+  <div id="vn-count" class="vn-count"></div>
+  <div id="vn-list" class="vn-list"></div>
+  <div id="vn-pagination" class="vn-pagination"></div>
+</div>
+
+<script>
+var VN_ENTRIES = {{ site.data.audio_archive | jsonify }};
+var VN_PAGE_SIZE = 30;
+var vnQuery = '';
+var vnSort = 'date_added';
+var vnPage = 1;
+
+function vnEsc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function vnFormatDuration(secs) {
+  if (!secs) return '—';
+  var h = Math.floor(secs / 3600);
+  var m = Math.floor((secs % 3600) / 60);
+  var s = Math.floor(secs % 60);
+  if (h > 0) return h + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  return m + ':' + String(s).padStart(2,'0');
+}
+
+function vnFormatDate(str) {
+  if (!str) return '—';
+  var parts = str.split('-');
+  var d = new Date(Date.UTC(+parts[0], +parts[1] - 1, +parts[2]));
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function vnGetFiltered() {
+  var q = vnQuery.trim().toLowerCase();
+  if (!q) return VN_ENTRIES.slice();
+  return VN_ENTRIES.filter(function(e) {
+    return e.title.toLowerCase().indexOf(q) !== -1;
+  });
+}
+
+function vnGetSorted(arr) {
+  return arr.slice().sort(function(a, b) {
+    if (vnSort === 'title') return a.title.localeCompare(b.title);
+    if (vnSort === 'year') return (a.year || 0) - (b.year || 0);
+    if (vnSort === 'duration_seconds') return (a.duration_seconds || 0) - (b.duration_seconds || 0);
+    return (b.date_added || '').localeCompare(a.date_added || '');
+  });
+}
+
+function vnRender() {
+  var filtered = vnGetSorted(vnGetFiltered());
+  var total = filtered.length;
+  var totalPages = Math.max(1, Math.ceil(total / VN_PAGE_SIZE));
+  if (vnPage > totalPages) vnPage = totalPages;
+  var slice = filtered.slice((vnPage - 1) * VN_PAGE_SIZE, vnPage * VN_PAGE_SIZE);
+
+  var countEl = document.getElementById('vn-count');
+  if (total === VN_ENTRIES.length) {
+    countEl.textContent = total + (total === 1 ? ' entry' : ' entries');
+  } else {
+    countEl.textContent = total + ' of ' + VN_ENTRIES.length + ' entries';
+  }
+
+  var list = document.getElementById('vn-list');
+  if (slice.length === 0) {
+    list.innerHTML = '<p class="vn-empty">No entries found.</p>';
+  } else {
+    list.innerHTML = slice.map(function(e) {
+      var posterHtml = e.poster
+        ? '<img src="' + vnEsc(e.poster) + '" alt="' + vnEsc(e.title) + ' poster" loading="lazy" class="vn-poster-img">'
+        : '<div class="vn-poster-placeholder"></div>';
+      var meta = [];
+      if (e.year) meta.push(e.year);
+      if (e.director) meta.push(vnEsc(e.director));
+      var encodedFilename = encodeURIComponent(e.filename);
+      return (
+        '<div class="vn-entry">' +
+          '<div class="vn-poster">' + posterHtml + '</div>' +
+          '<div class="vn-info">' +
+            '<div class="vn-meta">' + meta.join(' · ') + '</div>' +
+            '<h2 class="vn-title">' + vnEsc(e.title) + '</h2>' +
+            '<div class="vn-sub">Added ' + vnFormatDate(e.date_added) + ' · ' + vnFormatDuration(e.duration_seconds) + '</div>' +
+            '<div class="vn-player-row">' +
+              '<audio controls preload="none" class="vn-audio">' +
+                '<source src="/audio/' + encodedFilename + '">' +
+              '</audio>' +
+              '<a class="vn-download" href="/audio/' + encodedFilename + '" download="' + vnEsc(e.filename) + '">Download</a>' +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  var pag = document.getElementById('vn-pagination');
+  if (totalPages <= 1) {
+    pag.innerHTML = '';
+  } else {
+    var prev = vnPage > 1
+      ? '<button class="vn-page-btn" onclick="vnGoPage(' + (vnPage - 1) + ')">← Previous</button>'
+      : '<button class="vn-page-btn" disabled>← Previous</button>';
+    var next = vnPage < totalPages
+      ? '<button class="vn-page-btn" onclick="vnGoPage(' + (vnPage + 1) + ')">Next →</button>'
+      : '<button class="vn-page-btn" disabled>Next →</button>';
+    pag.innerHTML = prev + '<span class="vn-page-info">' + vnPage + ' / ' + totalPages + '</span>' + next;
+  }
+}
+
+function vnGoPage(n) {
+  vnPage = n;
+  vnRender();
+  document.getElementById('vn-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+document.getElementById('vn-search').addEventListener('input', function() {
+  vnQuery = this.value;
+  vnPage = 1;
+  vnRender();
+});
+
+document.querySelectorAll('.vn-sort-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    vnSort = this.dataset.sort;
+    document.querySelectorAll('.vn-sort-btn').forEach(function(b) { b.classList.remove('active'); });
+    this.classList.add('active');
+    vnPage = 1;
+    vnRender();
+  });
+});
+
+vnRender();
+</script>
+
+<style>
+  .vn-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 10px 3rem;
+  }
+  .vn-heading {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-weight: 400;
+    font-size: 1.6rem;
+    color: #1a1814;
+    margin: 1.5rem 0 1.25rem;
+    letter-spacing: 0.02em;
+  }
+  .vn-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #d8d2c8;
+  }
+  .vn-search {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 0.9rem;
+    color: #1a1814;
+    background: transparent;
+    border: 1px solid #d8d2c8;
+    border-radius: 0;
+    padding: 0.35rem 0.6rem;
+    flex: 1;
+    min-width: 180px;
+    outline: none;
+    box-shadow: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .vn-search:focus { border-color: #8a8478; }
+  .vn-sort-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .vn-sort-label {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #8a8478;
+  }
+  .vn-sort-btn {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #8a8478;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s;
+    text-decoration: none;
+  }
+  .vn-sort-btn:hover { color: #1a1814; }
+  .vn-sort-btn.active { color: #1a1814; text-decoration: underline; }
+  .vn-count {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: #8a8478;
+    margin-bottom: 0.5rem;
+  }
+  .vn-entry {
+    display: flex;
+    gap: 1.25rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #d8d2c8;
+    align-items: flex-start;
+  }
+  .vn-entry:last-child { border-bottom: none; }
+  .vn-poster { flex-shrink: 0; width: 80px; }
+  .vn-poster-img {
+    width: 80px;
+    display: block;
+    max-width: none;
+    margin: 0;
+    border: none;
+    box-shadow: none;
+  }
+  .vn-poster-placeholder {
+    width: 80px;
+    height: 120px;
+    background: #d8d2c8;
+    display: block;
+    box-shadow: none;
+  }
+  .vn-info { flex: 1; min-width: 0; }
+  .vn-meta {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: #8a8478;
+    margin-bottom: 0.3rem;
+    margin-top: 0;
+  }
+  .vn-title {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: #1a1814;
+    margin: 0 0 0.35rem 0;
+  }
+  .vn-sub {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: #8a8478;
+    margin-bottom: 0.75rem;
+    margin-top: 0;
+  }
+  .vn-player-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .vn-audio {
+    height: 32px;
+    flex: 1;
+    min-width: 160px;
+    max-width: 420px;
+    accent-color: #1a1814;
+  }
+  .vn-download {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #8a8478;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.2s;
+  }
+  .vn-download:hover { color: #1a1814; }
+  .vn-empty {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-style: italic;
+    color: #8a8478;
+    padding: 2rem 0;
+    margin: 0;
+  }
+  .vn-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 2rem 0 1rem;
+  }
+  .vn-page-btn {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #8a8478;
+    background: none;
+    border: 1px solid #d8d2c8;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    box-shadow: none;
+  }
+  .vn-page-btn:hover:not(:disabled) { color: #1a1814; border-color: #8a8478; }
+  .vn-page-btn:disabled { opacity: 0.4; cursor: default; }
+  .vn-page-info {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: #8a8478;
+  }
+  @media (max-width: 600px) {
+    .vn-entry { flex-direction: column; gap: 0.75rem; }
+    .vn-poster { width: 60px; }
+    .vn-poster-img { width: 60px; max-width: none; }
+    .vn-poster-placeholder { width: 60px; height: 90px; }
+    .vn-audio { max-width: none; min-width: 0; width: 100%; }
+    .vn-player-row { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+  }
+</style>

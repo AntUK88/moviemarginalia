@@ -1,0 +1,29 @@
+---
+layout: null
+permalink: /voicenotes/feed.xml
+sitemap: false
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+  <channel>
+    <title>{{ site.title }} — Voice Notes</title>
+    <link>{{ site.url }}/voicenotes/</link>
+    <atom:link href="{{ site.url }}/voicenotes/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Audio voice notes on film by {{ site.author }}</description>
+    <language>en-us</language>
+    <itunes:author>{{ site.author }}</itunes:author>
+    <itunes:explicit>no</itunes:explicit>
+    {% for entry in site.data.audio_archive %}
+    <item>
+      <title>{{ entry.title | xml_escape }}{% if entry.year %} ({{ entry.year }}){% endif %}</title>
+      <pubDate>{{ entry.date_added | date_to_rfc822 }}</pubDate>
+      <guid isPermaLink="false">{{ site.url }}/audio/{{ entry.filename | uri_escape }}</guid>
+      <enclosure url="{{ site.url }}/audio/{{ entry.filename | uri_escape }}" length="0" type="audio/mp4"/>
+      <itunes:duration>{{ entry.duration_seconds }}</itunes:duration>
+      {% if entry.director %}<description>Directed by {{ entry.director | xml_escape }}</description>{% endif %}
+    </item>
+    {% endfor %}
+  </channel>
+</rss>

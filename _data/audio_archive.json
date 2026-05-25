@@ -1,11 +1,11 @@
 [
   {
-    "letterboxd_slug": "kokuho_compressed",
-    "title": "Kokuho_Compressed",
-    "year": null,
-    "director": null,
-    "poster": null,
-    "filename": "kokuho_compressed.m4a",
+    "letterboxd_slug": "kokuho",
+    "title": "Kokuho",
+    "year": 2025,
+    "director": "Sang-il Lee",
+    "poster": "https://image.tmdb.org/t/p/w185/a15F5KJ4mleusJR1YKP4zUyZaxG.jpg",
+    "filename": "kokuho.m4a",
     "date_added": "2026-05-25",
     "duration_seconds": 977
   }

@@ -7,7 +7,8 @@
     "poster": "https://image.tmdb.org/t/p/w185/a15F5KJ4mleusJR1YKP4zUyZaxG.jpg",
     "filename": "kokuho.m4a",
     "date_added": "2026-05-25",
-    "duration_seconds": 977
+    "duration_seconds": 977,
+    "file_size_bytes": 39090034
   },
   {
     "letterboxd_slug": "faster-faster",
@@ -17,6 +18,7 @@
     "poster": "https://image.tmdb.org/t/p/w185/AsUeaXrhw4oscCSjUZ6heh1pVvd.jpg",
     "filename": "faster-faster.m4a",
     "date_added": "2026-05-29",
-    "duration_seconds": 616
+    "duration_seconds": 616,
+    "file_size_bytes": 19455248
   }
 ]

@@ -8,10 +8,15 @@ Example:             the-godfather.m4a  /  sabrina-1995.m4a
 
 The slug is converted to a title search query. If the slug ends with a
 4-digit year (e.g. sabrina-1995), that year is used to filter results.
+
+Usage:
+  python3 update_audio_archive.py                        # normal scan
+  python3 update_audio_archive.py --reprocess <slug> <tmdb_id>
 """
 
 import os
 import re
+import sys
 import json
 import datetime
 from pathlib import Path
@@ -73,12 +78,45 @@ def tmdb_search(title, year=None):
     return results[0] if results else None
 
 
+def tmdb_fetch_by_id(tmdb_id):
+    r = requests.get(f"{TMDB_BASE}/movie/{tmdb_id}", headers=HEADERS, timeout=15)
+    r.raise_for_status()
+    return r.json()
+
+
 def tmdb_director(tmdb_id):
     r = requests.get(f"{TMDB_BASE}/movie/{tmdb_id}/credits", headers=HEADERS, timeout=15)
     r.raise_for_status()
     crew = r.json().get("crew", [])
     directors = [m["name"] for m in crew if m.get("job") == "Director"]
     return directors[0] if directors else None
+
+
+def build_entry_from_movie(movie, slug, path):
+    tmdb_id = movie["id"]
+    tmdb_title = movie.get("title", slug.replace("-", " ").title())
+    release_date = movie.get("release_date", "")
+    tmdb_year = int(release_date[:4]) if release_date else None
+    poster_path = movie.get("poster_path")
+    poster = (TMDB_IMG_BASE + poster_path) if poster_path else None
+
+    try:
+        director = tmdb_director(tmdb_id)
+    except Exception:
+        director = None
+
+    print(f"    {tmdb_title} ({tmdb_year}), dir. {director}")
+    return {
+        "letterboxd_slug": slug,
+        "title": tmdb_title,
+        "year": tmdb_year,
+        "director": director,
+        "poster": poster,
+        "filename": path.name,
+        "date_added": datetime.date.today().isoformat(),
+        "duration_seconds": get_duration(path),
+        "file_size_bytes": path.stat().st_size,
+    }
 
 
 def process_file(path, existing_filenames):
@@ -107,12 +145,32 @@ def process_file(path, existing_filenames):
             "filename": filename,
             "date_added": datetime.date.today().isoformat(),
             "duration_seconds": get_duration(path),
+            "file_size_bytes": path.stat().st_size,
         }
 
-    tmdb_id = movie["id"]
-    tmdb_title = movie.get("title", title.title())
+    return build_entry_from_movie(movie, slug, path)
+
+
+def reprocess(slug, tmdb_id):
+    """Re-fetch TMDb metadata for an existing entry using a specific movie ID."""
+    archive = load_archive()
+    idx = next((i for i, e in enumerate(archive) if e["letterboxd_slug"] == slug), None)
+    if idx is None:
+        print(f"No entry found for slug: {slug}")
+        sys.exit(1)
+
+    entry = archive[idx]
+    audio_path = AUDIO_DIR / entry["filename"]
+
+    print(f"Re-processing '{slug}' with TMDb ID {tmdb_id}…")
+    try:
+        movie = tmdb_fetch_by_id(tmdb_id)
+    except Exception as e:
+        print(f"TMDb fetch error: {e}")
+        sys.exit(1)
+
     release_date = movie.get("release_date", "")
-    tmdb_year = int(release_date[:4]) if release_date else year
+    year = int(release_date[:4]) if release_date else None
     poster_path = movie.get("poster_path")
     poster = (TMDB_IMG_BASE + poster_path) if poster_path else None
 
@@ -121,17 +179,14 @@ def process_file(path, existing_filenames):
     except Exception:
         director = None
 
-    print(f"    {tmdb_title} ({tmdb_year}), dir. {director}")
-    return {
-        "letterboxd_slug": slug,
-        "title": tmdb_title,
-        "year": tmdb_year,
-        "director": director,
-        "poster": poster,
-        "filename": filename,
-        "date_added": datetime.date.today().isoformat(),
-        "duration_seconds": get_duration(path),
-    }
+    entry["title"] = movie.get("title", slug.replace("-", " ").title())
+    entry["year"] = year
+    entry["director"] = director
+    entry["poster"] = poster
+
+    print(f"  → {entry['title']} ({year}), dir. {director}")
+    save_archive(archive)
+    print("Archive updated.")
 
 
 def main():
@@ -150,6 +205,17 @@ def main():
     if removed:
         print(f"Removed {removed} deleted {'entry' if removed == 1 else 'entries'}.")
 
+    # Backfill file_size_bytes for existing entries that don't have it
+    backfilled = 0
+    for entry in kept:
+        if entry.get("file_size_bytes") is None:
+            path = AUDIO_DIR / entry["filename"]
+            if path.exists():
+                entry["file_size_bytes"] = path.stat().st_size
+                backfilled += 1
+    if backfilled:
+        print(f"Backfilled file_size_bytes for {backfilled} existing {'entry' if backfilled == 1 else 'entries'}.")
+
     # Add entries for new files
     new_entries = []
     for path in audio_files:
@@ -160,11 +226,14 @@ def main():
     if new_entries:
         print(f"\nAdded {len(new_entries)} new {'entry' if len(new_entries) == 1 else 'entries'}.")
 
-    if removed or new_entries:
+    if removed or new_entries or backfilled:
         save_archive(kept + new_entries)
     else:
         print("No changes.")
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) == 4 and sys.argv[1] == "--reprocess":
+        reprocess(sys.argv[2], int(sys.argv[3]))
+    else:
+        main()

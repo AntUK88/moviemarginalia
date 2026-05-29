@@ -20,38 +20,74 @@ sitemap: false
     </div>
   </div>
 
-  <div id="vn-count" class="vn-count"></div>
+  <div id="vn-count" class="vn-count" title="Click to toggle fix-match controls"></div>
   <div id="vn-list" class="vn-list"></div>
   <div id="vn-pagination" class="vn-pagination"></div>
 </div>
 
 <!-- Fix match modal -->
-<div id="vn-fix-modal" class="vn-modal-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="vn-fix-heading">
+<div id="vn-fix-modal" class="vn-modal-overlay" style="display:none" role="dialog" aria-modal="true">
   <div class="vn-modal">
-    <h2 class="vn-modal-heading" id="vn-fix-heading">Fix movie match</h2>
-    <p class="vn-modal-slug">Slug: <code id="vn-fix-slug-display"></code></p>
-    <p class="vn-modal-hint">Find the correct film on TMDb, copy its numeric ID from the URL, then paste it below.</p>
-    <a id="vn-fix-tmdb-link" href="https://www.themoviedb.org/search" target="_blank" rel="noopener" class="vn-modal-tmdb-link">Search TMDb →</a>
-    <div class="vn-modal-field">
-      <label for="vn-fix-tmdb-id" class="vn-modal-label">TMDb movie ID</label>
-      <input type="text" id="vn-fix-tmdb-id" class="vn-modal-input" placeholder="e.g. 12345" autocomplete="off">
+    <h2 class="vn-modal-heading">Fix movie match</h2>
+
+    <!-- One-time token setup -->
+    <div id="vn-fix-pat-section">
+      <p class="vn-modal-hint">To apply fixes from the browser you need a GitHub token — one-time setup, stored only in this browser.</p>
+      <ol class="vn-modal-steps">
+        <li>Open GitHub → Settings → <a id="vn-fix-token-link" href="https://github.com/settings/tokens/new?scopes=workflow&description=moviemarginalia-voicenotes" target="_blank" rel="noopener">Generate new token</a> (classic)</li>
+        <li>Tick <strong>workflow</strong>, set an expiry, copy the token</li>
+        <li>Paste it here:</li>
+      </ol>
+      <div class="vn-modal-field">
+        <label for="vn-fix-pat-input" class="vn-modal-label">GitHub token</label>
+        <input type="password" id="vn-fix-pat-input" class="vn-modal-input" placeholder="ghp_…" autocomplete="off">
+      </div>
+      <div class="vn-modal-actions">
+        <button id="vn-fix-pat-save" class="vn-modal-primary-btn">Save &amp; continue</button>
+        <button id="vn-fix-pat-cancel" class="vn-modal-ghost-btn">Cancel</button>
+      </div>
     </div>
-    <div class="vn-modal-cmd-wrap">
-      <code id="vn-fix-cmd" class="vn-modal-cmd"></code>
+
+    <!-- Fix form -->
+    <div id="vn-fix-form-section" style="display:none">
+      <p class="vn-modal-slug">Slug: <code id="vn-fix-slug-display"></code></p>
+      <p class="vn-modal-hint">Find the correct film on TMDb and copy its numeric ID from the URL.</p>
+      <a id="vn-fix-tmdb-link" href="https://www.themoviedb.org/search" target="_blank" rel="noopener" class="vn-modal-link">Search TMDb →</a>
+      <div class="vn-modal-field">
+        <label for="vn-fix-tmdb-id" class="vn-modal-label">TMDb movie ID</label>
+        <input type="text" id="vn-fix-tmdb-id" class="vn-modal-input" placeholder="e.g. 47211" autocomplete="off" inputmode="numeric">
+      </div>
+      <p id="vn-fix-error" class="vn-modal-error" style="display:none"></p>
+      <div class="vn-modal-actions">
+        <button id="vn-fix-apply" class="vn-modal-primary-btn">Apply fix</button>
+        <button id="vn-fix-close-btn" class="vn-modal-ghost-btn">Close</button>
+        <button id="vn-fix-change-token" class="vn-modal-micro-btn">Change token</button>
+      </div>
     </div>
-    <div class="vn-modal-actions">
-      <button id="vn-fix-copy-btn" class="vn-modal-copy-btn">Copy command</button>
-      <button id="vn-fix-close-btn" class="vn-modal-close-btn">Close</button>
+
+    <!-- Success -->
+    <div id="vn-fix-success-section" style="display:none">
+      <p class="vn-modal-hint">Fix triggered. The archive will update and the page will rebuild in about two minutes.</p>
+      <div class="vn-modal-actions">
+        <button id="vn-fix-done" class="vn-modal-primary-btn">Done</button>
+      </div>
     </div>
+
   </div>
 </div>
 
 <script>
 var VN_ENTRIES = {{ site.data.audio_archive | jsonify }};
 var VN_PAGE_SIZE = 30;
+var VN_REPO = 'AntUK88/moviemarginalia';
+var VN_WORKFLOW = 'audio-archive.yml';
+var VN_BRANCH = 'gh-pages';
+
 var vnQuery = '';
 var vnSort = 'date_added';
 var vnPage = 1;
+var vnEditMode = false;
+var vnFixSlug = '';
 
 function vnEsc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -75,7 +111,7 @@ function vnFormatDate(str) {
 
 function vnFormatFileSize(bytes) {
   if (!bytes) return null;
-  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
 }
 
 function vnGetFiltered() {
@@ -103,11 +139,15 @@ function vnRender() {
   var slice = filtered.slice((vnPage - 1) * VN_PAGE_SIZE, vnPage * VN_PAGE_SIZE);
 
   var countEl = document.getElementById('vn-count');
-  countEl.textContent = total === VN_ENTRIES.length
+  var baseText = total === VN_ENTRIES.length
     ? total + (total === 1 ? ' entry' : ' entries')
     : total + ' of ' + VN_ENTRIES.length + ' entries';
+  countEl.textContent = vnEditMode ? baseText + ' · fix mode on' : baseText;
+  countEl.classList.toggle('vn-count-active', vnEditMode);
 
   var list = document.getElementById('vn-list');
+  list.classList.toggle('vn-edit-active', vnEditMode);
+
   if (slice.length === 0) {
     list.innerHTML = '<p class="vn-empty">No entries found.</p>';
   } else {
@@ -139,7 +179,7 @@ function vnRender() {
               '<div class="vn-progress-track">' +
                 '<div class="vn-progress-fill"></div>' +
               '</div>' +
-              '<span class="vn-time-display">0:00 / ' + totalLabel + '</span>' +
+              '<span class="vn-time-display">0:00 / ' + totalLabel + '</span>' +
             '</div>' +
             '<div class="vn-action-row">' +
               '<a class="vn-download" href="/audio/' + encodedFilename + '" download="' + vnEsc(e.filename) + '">Download</a>' +
@@ -196,13 +236,13 @@ function vnInitPlayers() {
     audio.addEventListener('timeupdate', function() {
       var pct = audio.duration ? (audio.currentTime / audio.duration * 100) : 0;
       fill.style.width = pct + '%';
-      timeEl.textContent = vnFormatDuration(Math.floor(audio.currentTime)) + ' / ' + totalLabel;
+      timeEl.textContent = vnFormatDuration(Math.floor(audio.currentTime)) + ' / ' + totalLabel;
     });
 
     audio.addEventListener('ended', function() {
       playBtn.innerHTML = '&#9654;';
       fill.style.width = '0%';
-      timeEl.textContent = '0:00 / ' + totalLabel;
+      timeEl.textContent = '0:00 / ' + totalLabel;
     });
 
     track.addEventListener('click', function(ev) {
@@ -229,6 +269,12 @@ function vnGoPage(n) {
   document.getElementById('vn-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+// Entry count → toggle edit mode
+document.getElementById('vn-count').addEventListener('click', function() {
+  vnEditMode = !vnEditMode;
+  vnRender();
+});
+
 document.getElementById('vn-search').addEventListener('input', function() {
   vnQuery = this.value;
   vnPage = 1;
@@ -245,9 +291,28 @@ document.querySelectorAll('.vn-sort-btn').forEach(function(btn) {
   });
 });
 
-// Fix match modal
-var vnFixSlug = '';
+// ── Fix match modal ──────────────────────────────────────────
 
+function vnGetPAT() { return localStorage.getItem('vn_gh_pat') || ''; }
+
+function vnModalShow(section) {
+  document.getElementById('vn-fix-pat-section').style.display  = section === 'pat'  ? '' : 'none';
+  document.getElementById('vn-fix-form-section').style.display = section === 'form' ? '' : 'none';
+  document.getElementById('vn-fix-success-section').style.display = section === 'success' ? '' : 'none';
+  document.getElementById('vn-fix-modal').style.display = 'flex';
+  if (section === 'pat') {
+    setTimeout(function() { document.getElementById('vn-fix-pat-input').focus(); }, 50);
+  } else if (section === 'form') {
+    document.getElementById('vn-fix-error').style.display = 'none';
+    setTimeout(function() { document.getElementById('vn-fix-tmdb-id').focus(); }, 50);
+  }
+}
+
+function vnModalClose() {
+  document.getElementById('vn-fix-modal').style.display = 'none';
+}
+
+// Open modal on Fix match click (event delegation)
 document.addEventListener('click', function(ev) {
   var btn = ev.target.closest('.vn-fix-btn');
   if (!btn) return;
@@ -257,40 +322,81 @@ document.addEventListener('click', function(ev) {
   document.getElementById('vn-fix-tmdb-link').href =
     'https://www.themoviedb.org/search?query=' + encodeURIComponent(title);
   document.getElementById('vn-fix-tmdb-id').value = '';
-  vnUpdateFixCmd('');
-  document.getElementById('vn-fix-modal').style.display = 'flex';
-  setTimeout(function() { document.getElementById('vn-fix-tmdb-id').focus(); }, 50);
+  vnModalShow(vnGetPAT() ? 'form' : 'pat');
 });
 
-document.getElementById('vn-fix-close-btn').addEventListener('click', function() {
-  document.getElementById('vn-fix-modal').style.display = 'none';
+document.getElementById('vn-fix-pat-save').addEventListener('click', function() {
+  var pat = document.getElementById('vn-fix-pat-input').value.trim();
+  if (!pat) return;
+  localStorage.setItem('vn_gh_pat', pat);
+  document.getElementById('vn-fix-pat-input').value = '';
+  vnModalShow('form');
+});
+
+document.getElementById('vn-fix-pat-cancel').addEventListener('click', vnModalClose);
+document.getElementById('vn-fix-close-btn').addEventListener('click', vnModalClose);
+document.getElementById('vn-fix-done').addEventListener('click', vnModalClose);
+
+document.getElementById('vn-fix-change-token').addEventListener('click', function() {
+  localStorage.removeItem('vn_gh_pat');
+  vnModalShow('pat');
 });
 
 document.getElementById('vn-fix-modal').addEventListener('click', function(ev) {
-  if (ev.target === this) this.style.display = 'none';
+  if (ev.target === this) vnModalClose();
 });
 
 document.addEventListener('keydown', function(ev) {
-  if (ev.key === 'Escape') document.getElementById('vn-fix-modal').style.display = 'none';
+  if (ev.key === 'Escape') vnModalClose();
 });
 
-function vnUpdateFixCmd(tmdbId) {
-  var id = tmdbId || '<tmdb-id>';
-  document.getElementById('vn-fix-cmd').textContent =
-    'python3 scripts/update_audio_archive.py --reprocess ' + vnFixSlug + ' ' + id;
-}
+document.getElementById('vn-fix-apply').addEventListener('click', function() {
+  var tmdbId = document.getElementById('vn-fix-tmdb-id').value.trim();
+  var errEl = document.getElementById('vn-fix-error');
+  if (!tmdbId || !/^\d+$/.test(tmdbId)) {
+    errEl.textContent = 'Please enter a numeric TMDb ID.';
+    errEl.style.display = '';
+    return;
+  }
+  var pat = vnGetPAT();
+  if (!pat) { vnModalShow('pat'); return; }
 
-document.getElementById('vn-fix-tmdb-id').addEventListener('input', function() {
-  vnUpdateFixCmd(this.value.trim());
-});
+  var btn = this;
+  btn.textContent = 'Applying…';
+  btn.disabled = true;
+  errEl.style.display = 'none';
 
-document.getElementById('vn-fix-copy-btn').addEventListener('click', function() {
-  var cmd = document.getElementById('vn-fix-cmd').textContent;
-  if (cmd.indexOf('<tmdb-id>') !== -1) return;
-  var self = this;
-  navigator.clipboard.writeText(cmd).then(function() {
-    self.textContent = 'Copied!';
-    setTimeout(function() { self.textContent = 'Copy command'; }, 1500);
+  fetch('https://api.github.com/repos/' + VN_REPO + '/actions/workflows/' + VN_WORKFLOW + '/dispatches', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + pat,
+      'Content-Type': 'application/json',
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28'
+    },
+    body: JSON.stringify({ ref: VN_BRANCH, inputs: { slug: vnFixSlug, tmdb_id: tmdbId } })
+  }).then(function(res) {
+    btn.textContent = 'Apply fix';
+    btn.disabled = false;
+    if (res.status === 204) {
+      vnModalShow('success');
+    } else if (res.status === 401 || res.status === 403) {
+      localStorage.removeItem('vn_gh_pat');
+      vnModalShow('pat');
+    } else {
+      res.json().then(function(body) {
+        errEl.textContent = 'Error ' + res.status + ': ' + (body.message || 'unknown error');
+        errEl.style.display = '';
+      }).catch(function() {
+        errEl.textContent = 'Error ' + res.status;
+        errEl.style.display = '';
+      });
+    }
+  }).catch(function() {
+    btn.textContent = 'Apply fix';
+    btn.disabled = false;
+    errEl.textContent = 'Network error — check your connection.';
+    errEl.style.display = '';
   });
 });
 
@@ -363,13 +469,22 @@ vnRender();
   }
   .vn-sort-btn:hover { color: #1a1814; }
   .vn-sort-btn.active { color: #1a1814; text-decoration: underline; }
+
+  /* Entry count — doubles as edit mode toggle */
   .vn-count {
     font-family: 'EB Garamond', Georgia, serif;
     font-size: 0.78rem;
     letter-spacing: 0.06em;
     color: #8a8478;
     margin-bottom: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s;
+    display: inline-block;
   }
+  .vn-count:hover { color: #1a1814; }
+  .vn-count-active { color: #1a1814; }
+
   .vn-entry {
     display: flex;
     gap: 1.25rem;
@@ -436,13 +551,11 @@ vnRender();
     border-radius: 50%;
     cursor: pointer;
     font-size: 0.6rem;
-    line-height: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
+    padding: 0 0 0 2px;
     transition: background 0.2s;
-    padding-left: 2px; /* optical centering for play triangle */
   }
   .vn-play-btn:hover { background: #3a342e; }
   .vn-progress-track {
@@ -474,7 +587,7 @@ vnRender();
     text-align: right;
   }
 
-  /* Action row: Download + Fix match */
+  /* Action row */
   .vn-action-row {
     display: flex;
     align-items: center;
@@ -487,11 +600,13 @@ vnRender();
     text-transform: uppercase;
     color: #8a8478;
     text-decoration: none;
-    white-space: nowrap;
     transition: color 0.2s;
   }
   .vn-download:hover { color: #1a1814; }
+
+  /* Fix match button — hidden until edit mode */
   .vn-fix-btn {
+    display: none;
     font-family: 'EB Garamond', Georgia, serif;
     font-size: 0.72rem;
     letter-spacing: 0.08em;
@@ -504,6 +619,7 @@ vnRender();
     transition: color 0.2s;
   }
   .vn-fix-btn:hover { color: #1a1814; }
+  .vn-edit-active .vn-fix-btn { display: inline; }
 
   /* Fix match modal */
   .vn-modal-overlay {
@@ -529,7 +645,7 @@ vnRender();
     font-weight: 400;
     font-size: 1.2rem;
     color: #1a1814;
-    margin: 0 0 1rem 0;
+    margin: 0 0 1.25rem 0;
     letter-spacing: 0.02em;
   }
   .vn-modal-slug {
@@ -546,21 +662,33 @@ vnRender();
     font-family: 'EB Garamond', Georgia, serif;
     font-size: 0.88rem;
     color: #8a8478;
-    margin: 0 0 0.75rem 0;
-    line-height: 1.5;
+    margin: 0 0 1rem 0;
+    line-height: 1.55;
   }
-  .vn-modal-tmdb-link {
+  .vn-modal-steps {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 0.88rem;
+    color: #8a8478;
+    line-height: 1.7;
+    padding-left: 1.2rem;
+    margin: 0 0 1rem 0;
+  }
+  .vn-modal-steps a {
+    color: #1a1814;
+    text-decoration: underline;
+  }
+  .vn-modal-link {
     font-family: 'EB Garamond', Georgia, serif;
     font-size: 0.78rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: #8a8478;
     text-decoration: none;
-    transition: color 0.2s;
     display: inline-block;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.1rem;
+    transition: color 0.2s;
   }
-  .vn-modal-tmdb-link:hover { color: #1a1814; }
+  .vn-modal-link:hover { color: #1a1814; }
   .vn-modal-field { margin-bottom: 1rem; }
   .vn-modal-label {
     font-family: 'EB Garamond', Georgia, serif;
@@ -585,27 +713,19 @@ vnRender();
     appearance: none;
   }
   .vn-modal-input:focus { border-color: #8a8478; }
-  .vn-modal-cmd-wrap {
-    background: #f0ebe3;
-    border: 1px solid #d8d2c8;
-    padding: 0.6rem 0.75rem;
-    margin-bottom: 1.25rem;
-    min-height: 2.5rem;
-    display: flex;
-    align-items: center;
-  }
-  .vn-modal-cmd {
-    font-family: 'Courier New', monospace;
-    font-size: 0.78rem;
-    color: #1a1814;
-    word-break: break-all;
+  .vn-modal-error {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 0.82rem;
+    color: #a0482a;
+    margin: 0 0 0.75rem 0;
   }
   .vn-modal-actions {
     display: flex;
     gap: 1rem;
     align-items: center;
+    flex-wrap: wrap;
   }
-  .vn-modal-copy-btn {
+  .vn-modal-primary-btn {
     font-family: 'EB Garamond', Georgia, serif;
     font-size: 0.78rem;
     letter-spacing: 0.08em;
@@ -617,8 +737,9 @@ vnRender();
     cursor: pointer;
     transition: background 0.2s;
   }
-  .vn-modal-copy-btn:hover { background: #3a342e; }
-  .vn-modal-close-btn {
+  .vn-modal-primary-btn:hover { background: #3a342e; }
+  .vn-modal-primary-btn:disabled { opacity: 0.5; cursor: default; }
+  .vn-modal-ghost-btn {
     font-family: 'EB Garamond', Georgia, serif;
     font-size: 0.78rem;
     letter-spacing: 0.08em;
@@ -630,7 +751,21 @@ vnRender();
     padding: 0;
     transition: color 0.2s;
   }
-  .vn-modal-close-btn:hover { color: #1a1814; }
+  .vn-modal-ghost-btn:hover { color: #1a1814; }
+  .vn-modal-micro-btn {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #b0a898;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: auto;
+    transition: color 0.2s;
+  }
+  .vn-modal-micro-btn:hover { color: #8a8478; }
 
   .vn-empty {
     font-family: 'EB Garamond', Georgia, serif;
@@ -675,5 +810,6 @@ vnRender();
     .vn-poster-placeholder { width: 60px; height: 90px; }
     .vn-player { gap: 0.5rem; }
     .vn-time-display { min-width: 0; font-size: 0.68rem; }
+    .vn-modal-micro-btn { margin-left: 0; }
   }
 </style>

@@ -6,6 +6,15 @@ on:
     paths:
       - "audio/**"
   workflow_dispatch:
+    inputs:
+      slug:
+        description: 'Slug to reprocess (leave blank for normal scan)'
+        required: false
+        default: ''
+      tmdb_id:
+        description: 'TMDb movie ID for reprocess'
+        required: false
+        default: ''
 
 jobs:
   update-archive:
@@ -28,7 +37,12 @@ jobs:
       - name: Update audio archive
         env:
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-        run: python3 scripts/update_audio_archive.py
+        run: |
+          if [ -n "${{ inputs.slug }}" ] && [ -n "${{ inputs.tmdb_id }}" ]; then
+            python3 scripts/update_audio_archive.py --reprocess "${{ inputs.slug }}" "${{ inputs.tmdb_id }}"
+          else
+            python3 scripts/update_audio_archive.py
+          fi
 
       - name: Commit updated archive
         run: |

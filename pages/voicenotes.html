@@ -183,6 +183,7 @@ function vnRender() {
             '</div>' +
             '<div class="vn-action-row">' +
               '<a class="vn-download" href="/audio/' + encodedFilename + '" download="' + vnEsc(e.filename) + '">Download</a>' +
+              (e.letterboxd_review_url ? '<a class="vn-lb-link" href="' + vnEsc(e.letterboxd_review_url) + '" target="_blank" rel="noopener">Letterboxd review</a>' : '') +
               '<button class="vn-fix-btn" data-slug="' + vnEsc(e.letterboxd_slug) + '" data-title="' + vnEsc(e.title) + '">Fix match</button>' +
             '</div>' +
           '</div>' +
@@ -603,6 +604,17 @@ vnRender();
     transition: color 0.2s;
   }
   .vn-download:hover { color: #1a1814; }
+  .vn-lb-link {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #8a8478;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.2s;
+  }
+  .vn-lb-link:hover { color: #1a1814; }
 
   /* Fix match button — hidden until edit mode */
   .vn-fix-btn {

@@ -18,6 +18,7 @@ import os
 import re
 import sys
 import json
+import time
 import datetime
 from pathlib import Path
 
@@ -31,6 +32,10 @@ ARCHIVE_PATH = REPO_ROOT / "_data" / "audio_archive.json"
 TMDB_BASE = "https://api.themoviedb.org/3"
 TMDB_IMG_BASE = "https://image.tmdb.org/t/p/w185"
 AUDIO_EXTENSIONS = {".m4a", ".mp3", ".ogg", ".opus", ".wav", ".aac", ".flac"}
+
+LB_USER = "moviemarginalia"
+LB_BASE = "https://letterboxd.com"
+LB_HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; archive-bot/1.0)"}
 
 BEARER_TOKEN = os.environ["TMDB_API_KEY"]
 HEADERS = {"Authorization": f"Bearer {BEARER_TOKEN}", "Accept": "application/json"}
@@ -68,6 +73,18 @@ def slug_to_title_and_year(slug):
     return slug.replace("-", " "), None
 
 
+def check_letterboxd_review(slug):
+    """Return the review URL if the user has a written review for this slug, else None."""
+    url = f"{LB_BASE}/{LB_USER}/film/{slug}/"
+    try:
+        r = requests.get(url, headers=LB_HEADERS, timeout=10)
+        if r.status_code == 200 and "body-text -prose" in r.text:
+            return url
+    except Exception:
+        pass
+    return None
+
+
 def tmdb_search(title, year=None):
     params = {"query": title, "include_adult": False}
     if year:
@@ -92,33 +109,6 @@ def tmdb_director(tmdb_id):
     return directors[0] if directors else None
 
 
-def build_entry_from_movie(movie, slug, path):
-    tmdb_id = movie["id"]
-    tmdb_title = movie.get("title", slug.replace("-", " ").title())
-    release_date = movie.get("release_date", "")
-    tmdb_year = int(release_date[:4]) if release_date else None
-    poster_path = movie.get("poster_path")
-    poster = (TMDB_IMG_BASE + poster_path) if poster_path else None
-
-    try:
-        director = tmdb_director(tmdb_id)
-    except Exception:
-        director = None
-
-    print(f"    {tmdb_title} ({tmdb_year}), dir. {director}")
-    return {
-        "letterboxd_slug": slug,
-        "title": tmdb_title,
-        "year": tmdb_year,
-        "director": director,
-        "poster": poster,
-        "filename": path.name,
-        "date_added": datetime.date.today().isoformat(),
-        "duration_seconds": get_duration(path),
-        "file_size_bytes": path.stat().st_size,
-    }
-
-
 def process_file(path, existing_filenames):
     filename = path.name
     if filename in existing_filenames:
@@ -134,21 +124,41 @@ def process_file(path, existing_filenames):
         print(f"    TMDb search error: {e}")
         movie = None
 
-    if not movie:
+    if movie:
+        tmdb_id = movie["id"]
+        tmdb_title = movie.get("title", title.title())
+        release_date = movie.get("release_date", "")
+        tmdb_year = int(release_date[:4]) if release_date else year
+        poster_path = movie.get("poster_path")
+        poster = (TMDB_IMG_BASE + poster_path) if poster_path else None
+        try:
+            director = tmdb_director(tmdb_id)
+        except Exception:
+            director = None
+        print(f"    {tmdb_title} ({tmdb_year}), dir. {director}")
+    else:
         print(f"    No TMDb result, using slug fallback")
-        return {
-            "letterboxd_slug": slug,
-            "title": title.title(),
-            "year": year,
-            "director": None,
-            "poster": None,
-            "filename": filename,
-            "date_added": datetime.date.today().isoformat(),
-            "duration_seconds": get_duration(path),
-            "file_size_bytes": path.stat().st_size,
-        }
+        tmdb_title = title.title()
+        tmdb_year = year
+        poster = None
+        director = None
 
-    return build_entry_from_movie(movie, slug, path)
+    print(f"    Checking Letterboxd review…")
+    lb_review = check_letterboxd_review(slug)
+    print(f"    {'Found' if lb_review else 'No'} review at {LB_BASE}/{LB_USER}/film/{slug}/")
+
+    return {
+        "letterboxd_slug": slug,
+        "title": tmdb_title,
+        "year": tmdb_year,
+        "director": director,
+        "poster": poster,
+        "filename": filename,
+        "date_added": datetime.date.today().isoformat(),
+        "duration_seconds": get_duration(path),
+        "file_size_bytes": path.stat().st_size,
+        "letterboxd_review_url": lb_review,
+    }
 
 
 def reprocess(slug, tmdb_id):
@@ -160,9 +170,8 @@ def reprocess(slug, tmdb_id):
         sys.exit(1)
 
     entry = archive[idx]
-    audio_path = AUDIO_DIR / entry["filename"]
-
     print(f"Re-processing '{slug}' with TMDb ID {tmdb_id}…")
+
     try:
         movie = tmdb_fetch_by_id(tmdb_id)
     except Exception as e:
@@ -183,6 +192,10 @@ def reprocess(slug, tmdb_id):
     entry["year"] = year
     entry["director"] = director
     entry["poster"] = poster
+
+    # Also refresh the Letterboxd review check
+    print(f"  Checking Letterboxd review…")
+    entry["letterboxd_review_url"] = check_letterboxd_review(slug)
 
     print(f"  → {entry['title']} ({year}), dir. {director}")
     save_archive(archive)
@@ -213,8 +226,21 @@ def main():
             if path.exists():
                 entry["file_size_bytes"] = path.stat().st_size
                 backfilled += 1
+
+    # Backfill letterboxd_review_url for existing entries that don't have it
+    lb_checked = 0
+    for entry in kept:
+        if "letterboxd_review_url" not in entry:
+            slug = entry["letterboxd_slug"]
+            print(f"  Checking Letterboxd review for '{slug}'…")
+            entry["letterboxd_review_url"] = check_letterboxd_review(slug)
+            lb_checked += 1
+            time.sleep(0.5)
+
     if backfilled:
         print(f"Backfilled file_size_bytes for {backfilled} existing {'entry' if backfilled == 1 else 'entries'}.")
+    if lb_checked:
+        print(f"Backfilled letterboxd_review_url for {lb_checked} existing {'entry' if lb_checked == 1 else 'entries'}.")
 
     # Add entries for new files
     new_entries = []
@@ -222,11 +248,12 @@ def main():
         entry = process_file(path, existing_filenames)
         if entry:
             new_entries.append(entry)
+            time.sleep(0.5)
 
     if new_entries:
         print(f"\nAdded {len(new_entries)} new {'entry' if len(new_entries) == 1 else 'entries'}.")
 
-    if removed or new_entries or backfilled:
+    if removed or new_entries or backfilled or lb_checked:
         save_archive(kept + new_entries)
     else:
         print("No changes.")

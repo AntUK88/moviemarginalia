@@ -8,7 +8,8 @@
     "filename": "kokuho.m4a",
     "date_added": "2026-05-25",
     "duration_seconds": 977,
-    "file_size_bytes": 39090034
+    "file_size_bytes": 39090034,
+    "letterboxd_review_url": "https://letterboxd.com/moviemarginalia/film/kokuho/"
   },
   {
     "letterboxd_slug": "faster-faster",
@@ -19,6 +20,7 @@
     "filename": "faster-faster.m4a",
     "date_added": "2026-05-29",
     "duration_seconds": 616,
-    "file_size_bytes": 19455248
+    "file_size_bytes": 19455248,
+    "letterboxd_review_url": "https://letterboxd.com/moviemarginalia/film/faster-faster/"
   }
 ]

@@ -6,12 +6,10 @@ metadata from TMDb, then appends new entries and writes the updated JSON.
 Filename convention: <letterboxd-slug>.m4a
 Example:             the-godfather.m4a  /  sabrina-1995.m4a
 
-The slug is converted to a title search query. If the slug ends with a
-4-digit year (e.g. sabrina-1995), that year is used to filter results.
-
 Usage:
   python3 update_audio_archive.py                        # normal scan
   python3 update_audio_archive.py --reprocess <slug> <tmdb_id>
+  python3 update_audio_archive.py --check-reviews        # find new LB reviews
 """
 
 import os
@@ -37,10 +35,14 @@ LB_USER = "moviemarginalia"
 LB_BASE = "https://letterboxd.com"
 LB_HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; archive-bot/1.0)"}
 
-BEARER_TOKEN = os.environ["TMDB_API_KEY"]
-HEADERS = {"Authorization": f"Bearer {BEARER_TOKEN}", "Accept": "application/json"}
-
 YEAR_SUFFIX_RE = re.compile(r"^(.*)-(\d{4})$")
+
+
+def tmdb_headers():
+    token = os.environ.get("TMDB_API_KEY")
+    if not token:
+        raise EnvironmentError("TMDB_API_KEY is not set")
+    return {"Authorization": f"Bearer {token}", "Accept": "application/json"}
 
 
 def load_archive():
@@ -89,20 +91,20 @@ def tmdb_search(title, year=None):
     params = {"query": title, "include_adult": False}
     if year:
         params["primary_release_year"] = year
-    r = requests.get(f"{TMDB_BASE}/search/movie", headers=HEADERS, params=params, timeout=15)
+    r = requests.get(f"{TMDB_BASE}/search/movie", headers=tmdb_headers(), params=params, timeout=15)
     r.raise_for_status()
     results = r.json().get("results", [])
     return results[0] if results else None
 
 
 def tmdb_fetch_by_id(tmdb_id):
-    r = requests.get(f"{TMDB_BASE}/movie/{tmdb_id}", headers=HEADERS, timeout=15)
+    r = requests.get(f"{TMDB_BASE}/movie/{tmdb_id}", headers=tmdb_headers(), timeout=15)
     r.raise_for_status()
     return r.json()
 
 
 def tmdb_director(tmdb_id):
-    r = requests.get(f"{TMDB_BASE}/movie/{tmdb_id}/credits", headers=HEADERS, timeout=15)
+    r = requests.get(f"{TMDB_BASE}/movie/{tmdb_id}/credits", headers=tmdb_headers(), timeout=15)
     r.raise_for_status()
     crew = r.json().get("crew", [])
     directors = [m["name"] for m in crew if m.get("job") == "Director"]
@@ -193,13 +195,42 @@ def reprocess(slug, tmdb_id):
     entry["director"] = director
     entry["poster"] = poster
 
-    # Also refresh the Letterboxd review check
     print(f"  Checking Letterboxd review…")
     entry["letterboxd_review_url"] = check_letterboxd_review(slug)
 
     print(f"  → {entry['title']} ({year}), dir. {director}")
     save_archive(archive)
     print("Archive updated.")
+
+
+def check_reviews():
+    """Check Letterboxd for reviews on entries that currently have none."""
+    archive = load_archive()
+    pending = [e for e in archive if not e.get("letterboxd_review_url")]
+
+    if not pending:
+        print("All entries already have Letterboxd review URLs.")
+        return
+
+    print(f"Checking {len(pending)} {'entry' if len(pending) == 1 else 'entries'} with no review link…")
+    updated = 0
+    for entry in pending:
+        slug = entry["letterboxd_slug"]
+        print(f"  '{slug}'…", end=" ", flush=True)
+        url = check_letterboxd_review(slug)
+        if url:
+            entry["letterboxd_review_url"] = url
+            print("found.")
+            updated += 1
+        else:
+            print("none.")
+        time.sleep(0.5)
+
+    if updated:
+        save_archive(archive)
+        print(f"\nUpdated {updated} {'entry' if updated == 1 else 'entries'}.")
+    else:
+        print("No new reviews found.")
 
 
 def main():
@@ -212,13 +243,11 @@ def main():
     )
     present_filenames = {p.name for p in audio_files}
 
-    # Remove entries whose files have been deleted
     kept = [e for e in archive if e["filename"] in present_filenames]
     removed = len(archive) - len(kept)
     if removed:
         print(f"Removed {removed} deleted {'entry' if removed == 1 else 'entries'}.")
 
-    # Backfill file_size_bytes for existing entries that don't have it
     backfilled = 0
     for entry in kept:
         if entry.get("file_size_bytes") is None:
@@ -227,7 +256,6 @@ def main():
                 entry["file_size_bytes"] = path.stat().st_size
                 backfilled += 1
 
-    # Backfill letterboxd_review_url for existing entries that don't have it
     lb_checked = 0
     for entry in kept:
         if "letterboxd_review_url" not in entry:
@@ -242,7 +270,6 @@ def main():
     if lb_checked:
         print(f"Backfilled letterboxd_review_url for {lb_checked} existing {'entry' if lb_checked == 1 else 'entries'}.")
 
-    # Add entries for new files
     new_entries = []
     for path in audio_files:
         entry = process_file(path, existing_filenames)
@@ -262,5 +289,7 @@ def main():
 if __name__ == "__main__":
     if len(sys.argv) == 4 and sys.argv[1] == "--reprocess":
         reprocess(sys.argv[2], int(sys.argv[3]))
+    elif len(sys.argv) == 2 and sys.argv[1] == "--check-reviews":
+        check_reviews()
     else:
         main()

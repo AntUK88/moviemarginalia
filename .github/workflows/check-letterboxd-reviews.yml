@@ -1,0 +1,35 @@
+name: Check Letterboxd Reviews
+
+on:
+  schedule:
+    - cron: '0 9 1 1,4,7,10 *'  # quarterly: 1 Jan, 1 Apr, 1 Jul, 1 Oct at 9am UTC
+  workflow_dispatch:
+
+jobs:
+  check-reviews:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests mutagen
+
+      - name: Check for new Letterboxd reviews
+        run: python3 scripts/update_audio_archive.py --check-reviews
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _data/audio_archive.json
+          git diff --staged --quiet || git commit -m "chore: update Letterboxd review links [skip ci]"
+          git push

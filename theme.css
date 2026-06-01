@@ -1,0 +1,100 @@
+/* html[data-theme="dark"] has specificity 0,1,1 which beats :root (0,1,0)
+   even when :root appears in an inline <style> later in the document */
+html[data-theme="dark"] {
+  --cream: #1a1714;
+  --bg: #1a1714;
+  --ink: #faf7f1;
+  --secondary: #d8d1c3;
+  --muted: #b3ab9d;
+  --accent: #8f2d28;
+  --kicker: #b0463f;
+  --rule: #2e2a24;
+  --blockquote-bg: #221e1a;
+}
+
+/* ── Toggle button ─────────────────────────────────────────────────────── */
+
+#theme-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  line-height: 1;
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+#theme-toggle:hover { color: var(--ink); }
+#theme-toggle .icon-sun  { display: none; }
+#theme-toggle .icon-moon { display: block; }
+html[data-theme="dark"] #theme-toggle .icon-sun  { display: block; }
+html[data-theme="dark"] #theme-toggle .icon-moon { display: none; }
+
+/* ── Bio page ──────────────────────────────────────────────────────────── */
+
+html[data-theme="dark"] .bio-wrap p,
+html[data-theme="dark"] .bio-wrap .byline { color: var(--ink); }
+
+/* ── Featured Reviews page ─────────────────────────────────────────────── */
+
+html[data-theme="dark"] .selected-item { border-color: var(--rule); }
+html[data-theme="dark"] .selected-meta,
+html[data-theme="dark"] .selected-year,
+html[data-theme="dark"] .selected-read-more { color: var(--muted); }
+html[data-theme="dark"] .selected-title a { color: var(--ink); }
+html[data-theme="dark"] .selected-title a:hover { color: var(--muted); }
+html[data-theme="dark"] .selected-excerpt { color: var(--ink); }
+
+/* ── Voice Notes page ──────────────────────────────────────────────────── */
+
+html[data-theme="dark"] .vn-heading { color: var(--ink); }
+html[data-theme="dark"] .vn-controls { border-color: var(--rule); }
+html[data-theme="dark"] .vn-search { color: var(--ink); border-color: var(--rule); }
+html[data-theme="dark"] .vn-search:focus { border-color: var(--muted); }
+html[data-theme="dark"] .vn-sort-label,
+html[data-theme="dark"] .vn-sort-btn { color: var(--muted); }
+html[data-theme="dark"] .vn-sort-btn:hover { color: var(--ink); }
+html[data-theme="dark"] .vn-sort-btn.active { color: var(--ink); }
+html[data-theme="dark"] .vn-count { color: var(--muted); }
+html[data-theme="dark"] .vn-count:hover,
+html[data-theme="dark"] .vn-count-active { color: var(--ink); }
+html[data-theme="dark"] .vn-entry { border-color: var(--rule); }
+html[data-theme="dark"] .vn-poster-placeholder { background: var(--rule); }
+html[data-theme="dark"] .vn-meta,
+html[data-theme="dark"] .vn-sub,
+html[data-theme="dark"] .vn-time-display { color: var(--muted); }
+html[data-theme="dark"] .vn-title { color: var(--ink); }
+html[data-theme="dark"] .vn-play-btn { background: var(--ink); color: var(--cream); }
+html[data-theme="dark"] .vn-play-btn:hover { background: var(--secondary); }
+html[data-theme="dark"] .vn-progress-track { background: var(--rule); }
+html[data-theme="dark"] .vn-progress-fill { background: var(--ink); }
+html[data-theme="dark"] .vn-download,
+html[data-theme="dark"] .vn-lb-link,
+html[data-theme="dark"] .vn-fix-btn { color: var(--muted); }
+html[data-theme="dark"] .vn-download:hover,
+html[data-theme="dark"] .vn-lb-link:hover,
+html[data-theme="dark"] .vn-fix-btn:hover { color: var(--ink); }
+html[data-theme="dark"] .vn-modal { background: #221e1a; border-color: var(--rule); }
+html[data-theme="dark"] .vn-modal-heading { color: var(--ink); }
+html[data-theme="dark"] .vn-modal-slug,
+html[data-theme="dark"] .vn-modal-hint,
+html[data-theme="dark"] .vn-modal-steps { color: var(--muted); }
+html[data-theme="dark"] .vn-modal-slug code { color: var(--ink); }
+html[data-theme="dark"] .vn-modal-steps a { color: var(--ink); }
+html[data-theme="dark"] .vn-modal-link { color: var(--muted); }
+html[data-theme="dark"] .vn-modal-link:hover { color: var(--ink); }
+html[data-theme="dark"] .vn-modal-label { color: var(--muted); }
+html[data-theme="dark"] .vn-modal-input { color: var(--ink); border-color: var(--rule); }
+html[data-theme="dark"] .vn-modal-input:focus { border-color: var(--muted); }
+html[data-theme="dark"] .vn-modal-primary-btn { color: var(--bg); background: var(--ink); }
+html[data-theme="dark"] .vn-modal-primary-btn:hover { background: var(--secondary); }
+html[data-theme="dark"] .vn-modal-ghost-btn { color: var(--muted); }
+html[data-theme="dark"] .vn-modal-ghost-btn:hover { color: var(--ink); }
+html[data-theme="dark"] .vn-modal-micro-btn { color: var(--secondary); }
+html[data-theme="dark"] .vn-modal-micro-btn:hover { color: var(--muted); }
+html[data-theme="dark"] .vn-empty { color: var(--muted); }
+html[data-theme="dark"] .vn-page-btn { color: var(--muted); border-color: var(--rule); }
+html[data-theme="dark"] .vn-page-btn:hover:not(:disabled) { color: var(--ink); border-color: var(--muted); }
+html[data-theme="dark"] .vn-page-info { color: var(--muted); }

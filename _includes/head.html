@@ -16,6 +16,8 @@
   <!-- CSS -->
   <link rel="stylesheet" href="/assets/css/main.css">
   <link rel="stylesheet" href="/assets/css/syntax.css">
+  <link rel="stylesheet" href="/theme.css">
+  <script>(function(){if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');})()</script>
 
   <!-- RSS Feed -->
   {% feed_meta %}
@@ -32,9 +34,9 @@
 
   <style>
     html, body {
-      background-color: #fff7ed;
+      background-color: var(--cream, #fff7ed);
       font-family: 'EB Garamond', Georgia, serif;
-      color: #1a1814;
+      color: var(--ink, #1a1814);
       margin: 0;
       padding: 0;
     }

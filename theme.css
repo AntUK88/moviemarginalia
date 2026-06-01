@@ -43,13 +43,15 @@ html[data-theme="dark"] .selected-item { border-color: var(--rule); }
 html[data-theme="dark"] .selected-meta,
 html[data-theme="dark"] .selected-year,
 html[data-theme="dark"] .selected-read-more { color: var(--muted); }
-html[data-theme="dark"] .selected-title a { color: var(--ink); }
+html[data-theme="dark"] .selected-title a { color: var(--kicker); }
 html[data-theme="dark"] .selected-title a:hover { color: var(--muted); }
 html[data-theme="dark"] .selected-excerpt { color: var(--ink); }
 
 /* ── Voice Notes page ──────────────────────────────────────────────────── */
 
-html[data-theme="dark"] .vn-heading { color: var(--ink); }
+html[data-theme="dark"] .page-content h1,
+html[data-theme="dark"] .post-content h1,
+html[data-theme="dark"] .vn-heading { color: var(--kicker); }
 html[data-theme="dark"] .vn-controls { border-color: var(--rule); }
 html[data-theme="dark"] .vn-search { color: var(--ink); border-color: var(--rule); }
 html[data-theme="dark"] .vn-search:focus { border-color: var(--muted); }
